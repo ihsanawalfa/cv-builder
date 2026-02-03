@@ -408,13 +408,20 @@ def convert_json_to_markdown(tailored_resume_json):
     contact = tailored_resume["contact"]
     name = tailored_resume["name"]
     
-    # Generate contact links HTML
+    # Generate contact links HTML - display actual email addresses and URLs
     contact_links = []
     for key, value in contact.items():
         if key != "location":  # Skip location as it's displayed separately
-            contact_links.append(f'<a href="{value}" style="margin: 0 0.5em; color: #0366d6; text-decoration: underline;">{key}</a>')
+            # Extract display text: for mailto: extract email, for tel: extract phone, otherwise use full URL
+            if value.startswith("mailto:"):
+                display_text = value.replace("mailto:", "")
+            elif value.startswith("tel:"):
+                display_text = value.replace("tel:", "")
+            else:
+                display_text = value
+            contact_links.append(f'<a href="{value}" style="margin: 0 0.5em; color: #0366d6; text-decoration: underline;">{display_text}</a>')
     
-    contacts_html = " | ".join(contact_links)
+    contacts_html = " • ".join(contact_links)
     
     top_section = top_section_template
     top_section = top_section.replace("{{name}}", name)
