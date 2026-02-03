@@ -419,7 +419,7 @@ def convert_json_to_markdown(tailored_resume_json):
                 display_text = value.replace("tel:", "")
             else:
                 display_text = value
-            contact_links.append(f'<a href="{value}" style="margin: 0 0.5em; color: #0366d6; text-decoration: underline;">{display_text}</a>')
+            contact_links.append(f'<a href="{value}" style="margin: 0 0.5em; color: #333333; text-decoration: none;">{display_text}</a>')
     
     contacts_html = " • ".join(contact_links)
     

@@ -1,1 +1,1 @@
-<a href="{{link}}" style="color: #0366d6; text-decoration: none; margin: 0 10px;">{{name}}</a>
+<a href="{{link}}" style="color: #333333; text-decoration: none; margin: 0 20px;">{{name}}</a>
