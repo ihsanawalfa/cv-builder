@@ -41,7 +41,7 @@ def generate_pdf_from_markdown(markdown_content, output_path=None):
             font-family: 'Helvetica', 'Arial', sans-serif;
             line-height: 1.3;
             color: #333333;
-            font-size: 9pt;
+            font-size: 9.9pt;
             margin: 0;
             padding: 0;
         }
@@ -59,18 +59,18 @@ def generate_pdf_from_markdown(markdown_content, output_path=None):
         }
 
         h1 {
-            font-size: 16pt;
+            font-size: 17.6pt;
             text-align: center;
         }
 
         h2 {
-            font-size: 12pt;
+            font-size: 13.2pt;
             border-bottom: 1px solid #cccccc;
             padding-bottom: 0.1em;
         }
 
         h3 {
-            font-size: 10pt;
+            font-size: 11pt;
         }
 
         p {
@@ -102,7 +102,7 @@ def generate_pdf_from_markdown(markdown_content, output_path=None):
             padding: 0.3em;
             border-radius: 2px;
             overflow-x: auto;
-            font-size: 8pt;
+            font-size: 8.8pt;
         }
 
         code {
@@ -110,7 +110,7 @@ def generate_pdf_from_markdown(markdown_content, output_path=None):
             background-color: #f5f5f5;
             padding: 1px 3px;
             border-radius: 2px;
-            font-size: 8pt;
+            font-size: 8.8pt;
         }
         """
         
@@ -181,7 +181,7 @@ def generate_pdf_from_json(tailored_resume_json, output_path=None):
             font-family: 'Helvetica', 'Arial', sans-serif;
             line-height: 1.3;
             color: var(--text-color);
-            font-size: 9pt;
+            font-size: 9.9pt;
             margin: 0;
             padding: 0;
         }
@@ -193,7 +193,7 @@ def generate_pdf_from_json(tailored_resume_json, output_path=None):
 
         /* Header styling - reduced sizes */
         h1 {
-            font-size: 18pt;
+            font-size: 19.8pt;
             color: var(--primary-color);
             margin-top: 0;
             margin-bottom: 0.2em;
@@ -203,7 +203,7 @@ def generate_pdf_from_json(tailored_resume_json, output_path=None):
         }
 
         h2 {
-            font-size: 11pt;
+            font-size: 12.1pt;
             color: var(--primary-color);
             border-bottom: 1px solid var(--primary-color);
             padding-bottom: 0.1em;
@@ -213,7 +213,7 @@ def generate_pdf_from_json(tailored_resume_json, output_path=None):
         }
 
         h3 {
-            font-size: 10pt;
+            font-size: 11pt;
             color: var(--primary-color);
             margin: 0.3em 0 0.2em 0;
             line-height: 1.2;
