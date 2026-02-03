@@ -100,40 +100,33 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
-if ENVIRONMENT == "production":
-    allowed_origins = [
-        "https://easyhired.online",
-        "https://www.easyhired.online",
-        "https://cv-rusuland.vercel.app",
-        "http://localhost:3000",
-        "https://cv87.vercel.app"
-    ]
-    allow_credentials = True
-else:
-    # In development: explicitly allow localhost for frontend
-    allowed_origins = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-        "http://localhost:5173",  # Vite default
-        "http://127.0.0.1:5173",
-        "https://cv-rusuland.vercel.app",
-        "https://cv87.vercel.app"
-    ]
-    allow_credentials = True
+# Custom CORS middleware to allow all origins
+class AllowAllCORS(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        origin = request.headers.get("origin")
+        
+        # Handle preflight requests
+        if request.method == "OPTIONS":
+            response = Response()
+            if origin:
+                response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD"
+            response.headers["Access-Control-Allow-Headers"] = "*"
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Expose-Headers"] = "*"
+            response.headers["Access-Control-Max-Age"] = "3600"
+            return response
+        
+        # Handle actual requests
+        response = await call_next(request)
+        if origin:
+            response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Expose-Headers"] = "*"
+        return response
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=allow_credentials,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=3600,  # Cache preflight requests for 1 hour
-)
+# Add custom CORS middleware to allow all origins
+app.add_middleware(AllowAllCORS)
 
 # Data models
 class UserLogin(BaseModel):
@@ -227,21 +220,18 @@ async def read_root():
 
 @app.options("/signin")
 async def signin_options(request: Request):
-    """Handle OPTIONS preflight requests for /signin"""
+    """Handle OPTIONS preflight requests for /signin - Allow all origins"""
     origin = request.headers.get("origin")
-    # Check if origin is allowed
-    if origin in allowed_origins or "*" in allowed_origins:
-        return Response(
-            status_code=200,
-            headers={
-                "Access-Control-Allow-Origin": origin if origin and origin in allowed_origins else allowed_origins[0] if allowed_origins else "*",
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization",
-                "Access-Control-Allow-Credentials": "true" if allow_credentials else "false",
-                "Access-Control-Max-Age": "3600",
-            }
-        )
-    return Response(status_code=403)
+    return Response(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": origin if origin else "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Max-Age": "3600",
+        }
+    )
 
 @app.post("/signin", response_model=Token)
 async def signin(user_login: UserLogin):
