@@ -1,0 +1,189 @@
+{
+  "name": "Ihsan Faridi",
+  "contact": {
+    "Email": "ihsanafaridi@gmail.com",
+    "Phone": "+6285111025693",
+    "LinkedIn": "www.linkedin.com/in/ihsan-faridi-4367b13a3"
+  },
+  "summary": "Full Stack Developer specializing in AI-Powered & Frontend-First Applications | Turning Ideas into Scalable Products. Experienced in building modern web applications using React.js, Next.js, Node.js, Python, and AI technologies. Passionate about creating scalable solutions and mentoring developers.",
+  "references": [],
+  "experience": [
+    {
+      "title": "Full-stack Developer",
+      "company": "Attekus",
+      "period": "Aug 2022 - Present",
+      "skills": [
+        "Artificial Intelligence (AI)",
+        "Next.js",
+        "Node.js",
+        "GitHub",
+        "Cursor AI",
+        "ChatGPT",
+        "TypeScript",
+        "Python (Programming Language)"
+      ],
+      "summary": "Developed full-stack applications with AI integration, focusing on frontend-first architecture and scalable solutions. Worked remotely from Brisbane, Australia, leveraging modern technologies to build innovative products.",
+      "highlights": [
+        "Built AI-powered applications using Next.js and TypeScript for frontend development",
+        "Developed backend services with Node.js and Python for scalable architecture",
+        "Integrated AI technologies including ChatGPT and Cursor AI into applications",
+        "Managed version control and collaboration using GitHub",
+        "Worked remotely, delivering high-quality solutions across time zones"
+      ]
+    },
+    {
+      "title": "Full Stack Developer",
+      "company": "PT EWINDO",
+      "period": "May 2020 - Jun 2022",
+      "skills": [
+        "React.js",
+        "Next.js",
+        "Python (Programming Language)",
+        "Artificial Intelligence (AI)",
+        "FastAPI",
+        "Node.js"
+      ],
+      "summary": "Led web development projects as a self-employed senior developer, specializing in React.js, Next.js, and Python-based backend solutions. Built AI-integrated applications using FastAPI and modern frontend frameworks.",
+      "highlights": [
+        "Developed modern web applications using React.js and Next.js",
+        "Built RESTful APIs and backend services using Python and FastAPI",
+        "Integrated AI capabilities into web applications",
+        "Architected scalable full-stack solutions",
+        "Managed end-to-end development lifecycle independently"
+      ]
+    },
+    {
+      "title": "Web Developer",
+      "company": "Salam Ganesha Academy",
+      "period": "Jul 2017 - Mar 2020",
+      "skills": [
+        "HTML",
+        "Cascading Style Sheets (CSS)",
+        "JavaScript",
+        "React.js"
+      ],
+      "summary": "Mentored students in web development fundamentals, teaching HTML, CSS, JavaScript, and React.js. Provided one-on-one guidance on industry-standard tools and best practices, fostering strong foundations in web design and development.",
+      "highlights": [
+        "Conducted one-on-one mentoring sessions teaching HTML, CSS, JavaScript, and React.js",
+        "Provided guidance on industry-standard tools including GitHub, Visual Studio Code, Figma, and Firebase hosting",
+        "Fostered strong foundation in web design, emphasizing best practices",
+        "Inspired creativity and problem-solving skills in students",
+        "Developed comprehensive curriculum and learning materials"
+      ]
+    }
+  ],
+  "skills": {
+    "Frontend Development": [
+      "React",
+      "redux",
+      "redux-thunk",
+      "Next.js",
+      "Angular",
+      "Vue",
+      "JavaScript",
+      "TypeScript",
+      "CSS",
+      "HTML",
+      "Bootstrap",
+      "TailwindCSS",
+      "Figma",
+      "InvisionApp",
+      "Zeplin"
+    ],
+    "Backend Development": [
+      "Node.js",
+      "NestJS",
+      "Express",
+      "Python",
+      "Django",
+      "Flask",
+      "FastAPI",
+      "RESTful APIs",
+      "GraphQL",
+      "Redis",
+      "RabbitMQ",
+      "TypeORM"
+    ],
+    "Shopify Development": [
+      "Shopify",
+      "Shopify Plus",
+      "Liquid",
+      "Hydrogen",
+      "Oxygen"
+    ],
+    "eCommerce Development": [
+      "Shopify",
+      "Shopify Plus",
+      "Liquid",
+      "Hydrogen",
+      "Oxygen"
+    ],
+    "Web3 Technologies": [
+      "Solidity",
+      "Web3.js",
+      "Ethers.js",
+      "Smart Contracts"
+    ],
+    "Blockchain Platforms": [
+      "Ethereum",
+      "Polygon",
+      "Solana",
+      "Binance Smart Chain"
+    ],
+    "Decentralized Finance (DeFi)": [
+      "DApps",
+      "Decentralized Exchanges (DEX)",
+      "Centralized Exchanges (CEX)",
+      "NFT Marketplaces"
+    ],
+    "Database Management": [
+      "MongoDB",
+      "PostgreSQL",
+      "MySQL",
+      "MSSQL"
+    ],
+    "Smart Contract Development": [
+      "Solidity",
+      "Hardhat",
+      "Truffle",
+      "OpenZeppelin"
+    ],
+    "Testing and Debugging": [
+      "Karma",
+      "Jest",
+      "Selenium",
+      "Cypress",
+      "Pytest"
+    ],
+    "Version Controlling System": [
+      "Git",
+      "Github",
+      "Gitlab",
+      "BitBucket"
+    ],
+    "Tools and DevOps": [
+      "Docker",
+      "Git",
+      "GitHub Actions",
+      "CircleCI",
+      "AWS",
+      "IPFS",
+      "Heroku",
+      "Vercel"
+    ],
+    "Project Management": [
+      "Agile Methodology",
+      "Jira",
+      "Confluence"
+    ],
+    "Data Visualization": [
+      "D3.js",
+      "Chart.js"
+    ]
+  },
+  "education": {
+    "degree": "Bachelor's degree, Computer Science",
+    "university": "Universitas Padjadjaran",
+    "period": "2018 - 2022"
+  }
+}

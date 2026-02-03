@@ -1,0 +1,165 @@
+{
+  "name": "Xinzhe Zhang",
+  "contact": {
+    "location": "Niceville, US",
+    "GitHub": "https://github.com/mk825",
+    "Email": "mailto:zhang87.work@gmail.com",
+    "Telegram": "https://t.me/fighting312"
+  },
+  "summary": "I am an experienced Software Engineer specializing in React.js, Next.js, Golang and Nest.js. I\u2019m passionate about building innovative products with clean, well-documented, and performant code. For the past 4 years, I\u2019ve focused on the Blockchain industry. In my most recent role, I led my team to success by bringing a collaborative culture and bridging any gaps. My greatest joy comes from empowering others and mentoring juniors to support their growth. Now I'm excited to take on a role where I can continue to advance in Web3, leveraging my frontend and backend expertise to help shape the future of blockchain applications - though I\u2019m open to other opportunities as well.",
+  "references": [],
+  "experience": [
+    {
+      "title": "Software Engineer",
+      "company": "Blocktech Brew",
+      "period": "August 2022 - Present",
+      "skills": [
+        "React.js",
+        "Bootstrap",
+        "Webpack",
+        "InvisionApp",
+        "Balsamiq",
+        "CircleCI",
+        "Jenkins",
+        "AWS"
+      ],
+      "summary": "Built and maintained an AI-driven platform that supports business decision-making. Worked mainly on the frontend side with Angular, NgRx and rxjs. Built a microservice using NestJS on the backend side with RabbitMQ for messaging. Mentored junior guys to let them grow in a collaborative team environment.",
+      "highlights": [
+        "Developed a real-time AI-powered task prioritization system using Angular and RxJS, improving team productivity by 30%",
+        "Implemented WebSocket integration for live updates and notifications, handling 50K concurrent users",
+        "Built reusable UI components library with NgRx state management, reducing development time by 40%",
+        "Set up automated testing pipeline with Jest and Cypress, achieving 85% test coverage"
+      ]
+    },
+    {
+      "title": "Frontend Developer",
+      "company": "J&D Landscaping LLC",
+      "period": "March 2023 - January 2025",
+      "skills": [],
+      "summary": "Contributed to building a Ticket Management System similar to ClickUp, built reusable components and integrated storybook for component testing. Collaborated with designers and product managers to ensure the interface was user-friendly and aligned with the business goals.",
+      "highlights": [
+        "Developed and maintained a ticket management system using React and Redux, serving 10K+ daily active users",
+        "Created a component library with Storybook, improving team collaboration and reducing UI inconsistencies by 70%",
+        "Implemented drag-and-drop functionality for ticket organization using React DnD, enhancing user experience",
+        "Optimized frontend performance by implementing lazy loading and code splitting, reducing initial load time by 45%"
+      ]
+    },
+    {
+      "title": "Backend Developer",
+      "company": "Linalgo",
+      "period": "August 2022 - February 2023",
+      "skills": [],
+      "summary": "Built and maintained a health insurance platform from the ground up. Used Laravel, Blade, jQuery, Bootstrap, MongoDB, RESTful API, Nginx, AWS.",
+      "highlights": []
+    },
+    {
+      "title": "Software Engineer Intern",
+      "company": "Seidat Oy",
+      "period": "March 2015 - February 2020",
+      "skills": [],
+      "summary": "Assisted in developing and testing software solutions, gaining hands-on experience in code debugging and troubleshooting. Collaborated with senior engineers to learn best practices in software development and contribute to team projects. Participated in daily stand-ups and project discussions, improving my understanding of workflow and team collaboration in a professional setting.",
+      "highlights": []
+    }
+  ],
+  "skills": {
+    "Frontend Development": [
+      "React",
+      "redux",
+      "redux-thunk",
+      "Next.js",
+      "Angular",
+      "Vue",
+      "JavaScript",
+      "TypeScript",
+      "CSS",
+      "HTML",
+      "Bootstrap",
+      "TailwindCSS",
+      "Figma",
+      "InvisionApp",
+      "Zeplin"
+    ],
+    "Backend Development": [
+      "Node.js",
+      "NestJS",
+      "Express",
+      "Python",
+      "Django",
+      "Flask",
+      "FastAPI",
+      "RESTful APIs",
+      "GraphQL",
+      "Redis",
+      "RabbitMQ",
+      "TypeORM"
+    ],
+    "Web3 Technologies": [
+      "Solidity",
+      "Web3.js",
+      "Ethers.js",
+      "Smart Contracts"
+    ],
+    "Blockchain Platforms": [
+      "Ethereum",
+      "Polygon",
+      "Solana",
+      "Binance Smart Chain"
+    ],
+    "Decentralized Finance (DeFi)": [
+      "DApps",
+      "Decentralized Exchanges (DEX)",
+      "Centralized Exchanges (CEX)",
+      "NFT Marketplaces"
+    ],
+    "Database Management": [
+      "MongoDB",
+      "PostgreSQL",
+      "MySQL",
+      "MSSQL"
+    ],
+    "Smart Contract Development": [
+      "Solidity",
+      "Hardhat",
+      "Truffle",
+      "OpenZeppelin"
+    ],
+    "Testing and Debugging": [
+      "Karma",
+      "Jest",
+      "Selenium",
+      "Cypress",
+      "Pytest"
+    ],
+    "Version Controlling System": [
+      "Git",
+      "Github",
+      "Gitlab",
+      "BitBucket"
+    ],
+    "Tools and DevOps": [
+      "Docker",
+      "Git",
+      "GitHub Actions",
+      "CircleCI",
+      "AWS",
+      "IPFS",
+      "Heroku",
+      "Vercel"
+    ],
+    "Project Management": [
+      "Agile Methodology",
+      "Jira",
+      "Confluence"
+    ],
+    "Data Visualization": [
+      "D3.js",
+      "Chart.js"
+    ]
+  },
+  "education": {
+    "degree": "Bachelor of Information Technology",
+    "university": "James Cook University, Singapore",
+    "period": "Jan 2009 - Dec 2011",
+    "description": "Major concentration in Software Development, Algorithm Design, and Database Management Systems with distinction."
+  }
+}

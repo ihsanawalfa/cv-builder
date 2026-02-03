@@ -1,0 +1,182 @@
+{
+  "name": "Andrew Santoli",
+  "contact": {
+    "location": "The Woodlands, TX",
+    "GitHub": "https://github.com/Uhmopt",
+    "Email": "mailto:santoli.andrew@gmail.com",
+    "Phone": "tel:+13467716340",
+    "LinkedIn": "https://www.linkedin.com/in/santoli-connected/"
+  },
+  "summary": "I am an experienced Software Engineer specializing in React.js, Next.js, Golang and Nest.js. I\u2019m passionate about building innovative products with clean, well-documented, and performant code. For the past 4 years, I\u2019ve focused on the Blockchain industry. In my most recent role, I led my team to success by bringing a collaborative culture and bridging any gaps. My greatest joy comes from empowering others and mentoring juniors to support their growth. Now I'm excited to take on a role where I can continue to advance in Web3, leveraging my frontend and backend expertise to help shape the future of blockchain applications - though I\u2019m open to other opportunities as well.",
+  "references":[
+  ],
+  "experience": [
+    {
+      "title": "Senior Full Stack Developer/CTO",
+      "company": "Santoli Connected Network",
+      "period": "Jun 2024- Present",
+      "skills": [
+        "React.js",
+        "Next.js",
+        "Angular",
+        "Vue",
+        "TailwindCSS",
+        "Golang",
+        "Nest.js",
+        "Django",
+        "AWS",
+        "GCP",
+        "TDD",
+        "etc"
+      ],
+      "summary": "I have worked on several projects in various roles, including frontend, backend, DevOps, or a combination of these. I have also contributed to improving development processes and technology across the company.",
+      "highlights": [
+        "Led development of a high-performance web application, achieving 97% PageSpeed score through NextJS optimization, SEO improvements, and AWS infrastructure setup (Route53, CloudFront, EC2, ELB, RDS)",
+        "Architected and deployed a microservices backend using NestJS and MongoDB, implementing API documentation with Swagger and CI/CD pipelines using GitHub Actions",
+        "Built a DEX platform with React and Web3.js, integrating smart contracts for token swaps and liquidity provision with 99.9% uptime",
+        "Developed a DAO platform using React and FastAPI, implementing proposal management and voting mechanisms with Web3.js integration",
+        "Created a real-time trading dashboard with WebSocket integration, achieving sub-second data updates and handling 100K+ concurrent users",
+        "Mentored junior developers, conducted code reviews, and established development standards that reduced bug reports by 40%",
+        "Optimized database queries and implemented caching strategies, reducing API response times by 60%",
+        "Designed and implemented secure authentication system using JWT and OAuth2, ensuring GDPR compliance",
+        "Set up comprehensive monitoring using ELK stack and Grafana, reducing incident response time by 50%"
+        ]
+    },
+    {
+      "title": "Senior Software Engineer",
+      "company": "Meomind",
+      "period": " Oct 2021- May 2024",
+      "skills": [
+        "React.js",
+        "Bootstrap",
+        "Webpack",
+        "InvisionApp",
+        "Balsamiq",
+        "CircleCI",
+        "Jenkins",
+        "AWS"
+      ],
+      "summary": "Built and maintained an AI-driven platform that supports business decision-making. Worked mainly on the frontend side with Angular, NgRx and rxjs. Built a microservice using NestJS on the backend side with RabbitMQ for messaging. Mentored junior guys to let them grow in a collaborative team environment.",
+      "highlights": [
+        "Developed a real-time AI-powered task prioritization system using Angular and RxJS, improving team productivity by 30%",
+        "Implemented WebSocket integration for live updates and notifications, handling 50K concurrent users",
+        "Built reusable UI components library with NgRx state management, reducing development time by 40%",
+        "Set up automated testing pipeline with Jest and Cypress, achieving 85% test coverage"
+      ]
+    },
+    {
+      "title": "Senior Full Stack Engineer",
+      "company": "Click&Boat",
+      "period": "Feb 2016-Nov 2020",
+      "skills": [],
+      "summary": "Contributed to building a Ticket Management System similar to ClickUp, built reusable components and integrated storybook for component testing. Collaborated with designers and product managers to ensure the interface was user-friendly and aligned with the business goals.",
+      "highlights": [
+        "Developed and maintained a ticket management system using React and Redux, serving 10K+ daily active users",
+        "Created a component library with Storybook, improving team collaboration and reducing UI inconsistencies by 70%",
+        "Implemented drag-and-drop functionality for ticket organization using React DnD, enhancing user experience",
+        "Optimized frontend performance by implementing lazy loading and code splitting, reducing initial load time by 45%"
+      ]
+    }
+  ],
+  "skills": {
+    "Frontend Development": [
+      "React",
+      "redux",
+      "redux-thunk",
+      "Next.js",
+      "Angular",
+      "Vue",
+      "JavaScript",
+      "TypeScript",
+      "CSS",
+      "HTML",
+      "Bootstrap",
+      "TailwindCSS",
+      "Figma",
+      "InvisionApp",
+      "Zeplin"
+    ],
+    "Backend Development": [
+      "Node.js",
+      "NestJS",
+      "Express",
+      "Python",
+      "Django",
+      "Flask",
+      "FastAPI",
+      "RESTful APIs",
+      "GraphQL",
+      "Redis",
+      "RabbitMQ",
+      "TypeORM"
+    ],
+    "Web3 Technologies": [
+      "Solidity",
+      "Web3.js",
+      "Ethers.js",
+      "Smart Contracts"
+    ],
+    "Blockchain Platforms": [
+      "Ethereum",
+      "Polygon",
+      "Solana",
+      "Binance Smart Chain"
+    ],
+    "Decentralized Finance (DeFi)": [
+      "DApps",
+      "Decentralized Exchanges (DEX)",
+      "Centralized Exchanges (CEX)",
+      "NFT Marketplaces"
+    ],
+    "Database Management": [
+      "MongoDB",
+      "PostgreSQL",
+      "MySQL",
+      "MSSQL"
+    ],
+    "Smart Contract Development": [
+      "Solidity",
+      "Hardhat",
+      "Truffle",
+      "OpenZeppelin"
+    ],
+    "Testing and Debugging": [
+      "Karma",
+      "Jest",
+      "Selenium",
+      "Cypress",
+      "Pytest"
+    ],
+    "Version Controlling System": [
+      "Git",
+      "Github",
+      "Gitlab",
+      "BitBucket"
+    ],
+    "Tools and DevOps": [
+      "Docker",
+      "Git",
+      "GitHub Actions",
+      "CircleCI",
+      "AWS",
+      "IPFS",
+      "Heroku",
+      "Vercel"
+    ],
+    "Project Management": [
+      "Agile Methodology",
+      "Jira",
+      "Confluence"
+    ],
+    "Data Visualization": [
+      "D3.js",
+      "Chart.js"
+    ]
+  },
+  "education": {
+    "degree": "Bachelor of Computer Science",
+    "university": "Santa Monica College",
+    "period": " Sep 2005- Nov 2009",
+    "description": "Major concentration in Software Development, Algorithm Design, and Database Management Systems with distinction."
+  }
+}

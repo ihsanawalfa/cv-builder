@@ -1,0 +1,218 @@
+{
+    "name": "Ronan Kelly",
+  "contact": {
+    "Email": "ronan.kkelly@gmail.com",
+    "GitHub": "https://github.com/smile-dev49"
+  },
+  "summary": "I am an experienced Software Engineer specializing in React.js, Next.js, Golang and Nest.js. I\u2019m passionate about building innovative products with clean, well-documented, and performant code. For the past 4 years, I\u2019ve focused on the Blockchain industry. In my most recent role, I led my team to success by bringing a collaborative culture and bridging any gaps. My greatest joy comes from empowering others and mentoring juniors to support their growth. Now I'm excited to take on a role where I can continue to advance in Web3, leveraging my frontend and backend expertise to help shape the future of blockchain applications - though I\u2019m open to other opportunities as well.",
+  "references": [],
+  "experience": [
+    { 
+      "title": "Senior Full-Stack Developer",
+      "company": "Tinloof at Germany by remote",
+      "period": "Nov 2023 - SEP 2025",
+      "skills": [
+        "React.js",
+        "Next.js",
+        "vue.js",
+        "node.js",
+        "express.js",
+        "mongodb",  
+        "postgresql",
+        "mysql",
+        "mssql",
+        "redis",
+        "rabbitmq",
+        "typeorm",
+        "nest.js",
+        "express.js",
+        "mongodb",
+        "postgresql",
+        "mysql",
+        "mssql",
+        "redis",
+        "rabbitmq",
+        "typeorm",
+        "nest.js",
+        "express.js",
+        "mongodb",
+        "postgresql",
+        "mysql",
+        "mssql",
+        "redis",
+        "rabbitmq",
+        "typeorm",
+        "nest.js",
+        "express.js",
+        "mongodb",
+        "postgresql",
+        "mysql",
+        "TailwindCSS",
+        "Shopify",
+        "Liquid",
+        "Shopify Plus",
+        "Shopify API",
+        "Shopify Theme",
+        "Shopify App",
+        "Shopify Script",
+        "Shopify Hook",
+        "Shopify Mutation",
+        "Shopify Query",
+        "Shopify Subscription",
+        "Shopify Webhook",
+        "Shopify Script Tag",
+        "Shopify Theme Editor"
+      ],
+      "summary": "Focused on building high-performance, responsive, and component-driven web applications using Next.js for the frontend and Shopify for backend integrations. Emphasized clean architecture, reusable code, and smooth user experiences across devices.",
+      "highlights": [
+        "Developed Next.js applications with a strong focus on performance, SEO, and scalability.",
+        "Integrated Shopify backend APIs to manage products, carts, and checkout flows.",
+        "Built custom Shopify storefronts using React components and dynamic data fetching.",
+        "Implemented responsive, accessible UIs with optimized animations and transitions.",
+        "Worked with REST and GraphQL APIs for data handling and dynamic content.",
+        "Collaborated on design implementation, ensuring pixel-perfect and user-focused interfaces.",
+        "Managed version control and deployments using Git / GitHub and modern build tools."
+      ]
+    },
+    {
+      "title": " Frontend Developer",
+      "company": "Huspy at United Kingdom by remote",
+      "period": "Mar 2021 - Sep 2023",
+      "skills": [
+        "React.js",
+        "Bootstrap",
+        "Webpack",
+        "InvisionApp",
+        "Balsamiq",
+        "CircleCI",
+        "Jenkins",
+        "AWS"
+      ],
+      "summary": "Focused on building dynamic, component-driven web applications using Next.js and Node.js. Emphasized code reusability, UI performance, and responsive design, ensuring seamless experiences across devices.",
+      "highlights": [
+        "Developed modern, server-rendered applications with Next.js, improving performance and SEO.",
+        "Built reusable components and optimized code structure for scalability.",
+        "Enhanced UI/UX through smooth animations, transitions, and accessibility best practices.",
+        "Integrated RESTful APIs and handled client-server data efficiently with Node.js.",
+        "Focused on responsive layouts, ensuring pixel-perfect and performant interfaces across devices."
+      ]
+    },
+    {
+      "title": "Frontend Developer",
+      "company": "Expleo Group on-site",
+      "period": "Sep 2016 - Mar 2021",
+      "skills": [],
+      "summary": "I build clean, responsive, and accessible user interfaces with a strong focus on usability, performance, and design precision. I enjoy transforming complex ideas into intuitive, user-friendly web applications and continuously improving both code quality and user experience.",
+      "highlights": [
+        "Developed fully responsive layouts using HTML5, CSS3, and JavaScript — ensuring seamless performance across all devices and browsers.",
+        "Implemented pixel-perfect designs and optimized pages for speed and accessibility.",
+        "Wrote semantic, maintainable code with a focus on best practices and reusability.",
+        "Partnered closely with design and backend teams to bring mockups and business logic to life through functional, elegant interfaces.",
+        "Built enterprise-grade applications with React and TypeScript, leveraging RxJS for reactive data flows and lazy loading for performance.",
+        "Created modular, reusable components and implemented route guards to enhance both maintainability and security.",
+        "Worked in Agile teams, contributing to code reviews, architecture planning, and continuous improvement."
+      ]
+    }   
+  ],
+  "skills": {
+    "Frontend Development": [
+      "React",
+      "redux",
+      "redux-thunk",
+      "Next.js",
+      "Angular",
+      "Vue",
+      "JavaScript",
+      "TypeScript",
+      "CSS",
+      "HTML",
+      "Bootstrap",
+      "TailwindCSS",
+      "Figma",
+      "InvisionApp",
+      "Zeplin"
+    ],
+    "Shopify Development": [
+      "Shopify",
+      "Liquid",
+      "Shopify Plus",
+      "Shopify API",
+      "Shopify Theme",
+      "Shopify App",
+      "Shopify Script"
+    ],
+    "Backend Development": [
+      "Node.js",
+      "NestJS",
+      "Express",
+      "Python",
+      "Django",
+      "Flask",
+      "FastAPI",
+      "RESTful APIs",
+      "GraphQL",
+      "Redis",
+      "RabbitMQ",
+      "TypeORM"
+    ],
+    "Web3 Technologies": [
+      "Solidity",
+      "Web3.js",
+      "Ethers.js",
+      "Smart Contracts"
+    ],
+    "Blockchain Platforms": [
+      "Ethereum",
+      "Polygon",
+      "Solana",
+      "Binance Smart Chain"
+    ],
+    "Decentralized Finance (DeFi)": [
+      "DApps",
+      "Decentralized Exchanges (DEX)",
+      "Centralized Exchanges (CEX)",
+      "NFT Marketplaces"
+    ],
+    "Database Management": [
+      "MongoDB",
+      "PostgreSQL",
+      "MySQL",
+      "MSSQL"
+    ],
+    "Smart Contract Development": [
+      "Solidity",
+      "Hardhat",
+      "Truffle",
+      "OpenZeppelin"
+    ],
+    "Testing and Debugging": [
+      "Karma",
+      "Jest",
+      "Selenium",
+      "Cypress",
+      "Pytest"
+    ],
+    "Version Controlling System": [
+      "Git",
+      "Github",
+      "Gitlab",
+      "BitBucket"
+    ],
+    "Tools and DevOps": [
+      "Docker",
+      "Git",
+      "GitHub Actions",
+      "CircleCI",
+      "AWS",
+      "IPFS", 
+      "Heroku",
+      "Vercel"
+    ]
+  },
+  "education": {
+    "degree": "Bachelor of Computer Science",
+    "university": "Ireland University",
+    "period": "2012 - 2016",
+    "description": "Major concentration in Software Development, Algorithm Design, and Database Management Systems with distinction."
+  }
+}

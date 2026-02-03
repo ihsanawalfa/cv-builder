@@ -1,0 +1,210 @@
+{
+  "name": "Angela Paez",
+  "contact": {
+    "Email": "angelappaez@gmail.com",
+    "WhatsApp": "https://wa.me/35699977693",
+    "LinkedIn": "https://www.linkedin.com/in/angela-patricia-paez-sanchez-3562023a0"
+  },
+    "summary": "I am a full stack developer with a passion for building web applications that are both functional and aesthetically pleasing. I have a strong background in React.js, Next.js, Node.js, and Shopify integrations. I am also proficient in HTML, CSS, and JavaScript. I am a quick learner and I am always looking for new challenges and opportunities to grow.",
+  "references": [],
+  "experience": [
+    {
+      "title": "Full Stack Developer",
+      "company": "GIMO Gloabl Interactive Marketing Online ltd",
+      "period": "Oct 2023 - Oct 2025",
+      "skills": [
+        "React.js",
+        "Next.js",
+        "Angular",
+        "Vue",
+        "TailwindCSS",
+        "Golang",
+        "Nest.js",
+        "Django",
+        "AWS",
+        "Shopify",
+        "Shopify Plus",
+        "Liquid",
+        "React",
+        "Next.js",
+        "Hydrogen",
+        "Oxygen",
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "jQuery",
+        "Bootstrap",
+        "TailwindCSS",
+        "Figma",
+        "InvisionApp",
+        "Zeplin",
+        "GCP",
+        "TDD",
+        "etc"
+      ],
+      "summary": "Focused on building high-performance, responsive, and component-driven web applications using Next.js for the frontend and Shopify for backend integrations. Emphasized clean architecture, reusable code, and smooth user experiences across devices.",
+      "highlights": [
+        "Developed Next.js applications with a strong focus on performance, SEO, and scalability.",
+        "Integrated Shopify backend APIs to manage products, carts, and checkout flows.",
+        "Built custom Shopify storefronts using React components and dynamic data fetching.",
+        "Implemented responsive, accessible UIs with optimized animations and transitions.",
+        "Worked with REST and GraphQL APIs for data handling and dynamic content.",
+        "Collaborated on design implementation, ensuring pixel-perfect and user-focused interfaces.",
+        "Managed version control and deployments using Git / GitHub and modern build tools."
+      ]
+    },
+    {
+      "title": "Full Stack Developer",
+      "company": "EveryMatrix ",
+      "period": "FEB 2022 - Sep 2023",
+      "skills": [
+        "React.js",
+        "Bootstrap",
+        "Webpack",
+        "InvisionApp",
+        "Balsamiq",
+        "CircleCI",
+        "Jenkins",
+        "AWS"
+      ],
+      "summary": "Focused on building dynamic, component-driven web applications using Next.js and Node.js. Emphasized code reusability, UI performance, and responsive design, ensuring seamless experiences across devices.",
+      "highlights": [
+        "Developed modern, server-rendered applications with Next.js, improving performance and SEO.",
+        "Built reusable components and optimized code structure for scalability.",
+        "Enhanced UI/UX through smooth animations, transitions, and accessibility best practices.",
+        "Integrated RESTful APIs and handled client-server data efficiently with Node.js.",
+        "Focused on responsive layouts, ensuring pixel-perfect and performant interfaces across devices."
+      ]
+    },
+    {
+      "title": "Web Developer",
+      "company": "AppCard, Inc.",
+      "period": "Sep 2019 - NOV 2021",
+      "skills": [],
+      "summary": "I build clean, responsive, and accessible user interfaces with a strong focus on usability, performance, and design precision. I enjoy transforming complex ideas into intuitive, user-friendly web applications and continuously improving both code quality and user experience.",
+      "highlights": [
+        "Developed fully responsive layouts using HTML5, CSS3, and JavaScript — ensuring seamless performance across all devices and browsers.",
+        "Implemented pixel-perfect designs and optimized pages for speed and accessibility.",
+        "Wrote semantic, maintainable code with a focus on best practices and reusability.",
+        "Partnered closely with design and backend teams to bring mockups and business logic to life through functional, elegant interfaces.",
+        "Built enterprise-grade applications with React and TypeScript, leveraging RxJS for reactive data flows and lazy loading for performance.",
+        "Created modular, reusable components and implemented route guards to enhance both maintainability and security.",
+        "Worked in Agile teams, contributing to code reviews, architecture planning, and continuous improvement."
+      ]
+    }   
+  ],
+  "skills": {
+    "Frontend Development": [
+      "React",
+      "redux",
+      "redux-thunk",
+      "Next.js",
+      "Angular",
+      "Vue",
+      "JavaScript",
+      "TypeScript",
+      "CSS",
+      "HTML",
+      "Bootstrap",
+      "TailwindCSS",
+      "Figma",
+      "InvisionApp",
+      "Zeplin"
+    ],
+    "Backend Development": [
+      "Node.js",
+      "NestJS",
+      "Express",
+      "Python",
+      "Django",
+      "Flask",
+      "FastAPI",
+      "RESTful APIs",
+      "GraphQL",
+      "Redis",
+      "RabbitMQ",
+      "TypeORM"
+    ],
+    "Shopify Development": [
+      "Shopify",
+      "Shopify Plus",
+      "Liquid",
+      "Hydrogen",
+      "Oxygen"
+    ],
+    "eCommerce Development": [
+      "Shopify",
+      "Shopify Plus",
+      "Liquid",
+      "Hydrogen",
+      "Oxygen"
+    ],
+    "Web3 Technologies": [
+      "Solidity",
+      "Web3.js",
+      "Ethers.js",
+      "Smart Contracts"
+    ],
+    "Blockchain Platforms": [
+      "Ethereum",
+      "Polygon",
+      "Solana",
+      "Binance Smart Chain"
+    ],
+    "Decentralized Finance (DeFi)": [
+      "DApps",
+      "Decentralized Exchanges (DEX)",
+      "Centralized Exchanges (CEX)",
+      "NFT Marketplaces"
+    ],
+    "Database Management": [
+      "MongoDB",
+      "PostgreSQL",
+      "MySQL",
+      "MSSQL"
+    ],
+    "Smart Contract Development": [
+      "Solidity",
+      "Hardhat",
+      "Truffle",
+      "OpenZeppelin"
+    ],
+    "Testing and Debugging": [
+      "Karma",
+      "Jest",
+      "Selenium",
+      "Cypress",
+      "Pytest"
+    ],
+    "Version Controlling System": [
+      "Git",
+      "Github",
+      "Gitlab",
+      "BitBucket"
+    ],
+    "Tools and DevOps": [
+      "Docker",
+      "Git",
+      "GitHub Actions",
+      "CircleCI",
+      "AWS",
+      "IPFS",
+      "Heroku",
+      "Vercel"
+    ],
+    "Project Management": [
+      "Agile Methodology",
+      "Jira",
+      "Confluence"
+    ],
+    "Data Visualization": [
+      "D3.js",
+      "Chart.js"
+    ]
+  },
+  "education": {
+    "degree": "Bachelor of Computer Science",
+    "university": "University of Applied and Environmental Sciences UDCA, Bogotá DC, Colombia",
+    "period": "JUN 2013 - AUG 2019"
+  }
+}

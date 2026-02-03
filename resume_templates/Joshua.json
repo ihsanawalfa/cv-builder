@@ -1,0 +1,188 @@
+{
+    "name": "Zlatko Agovic",
+    "contact": {
+        "location": "San Diego, CA, 92129",
+        "Email": "joshua.martinez000001@gmail.com",
+        "Phone": "+1 208 410 8165"
+    },
+    "summary": "It is important to be a top-quality developer, but my goal is to be someone you can trust and rely on to get the job done, even when there are unexpected issues and problems.\n                Senior Front End Engineer who thrives in building startups from the ground up, no matter the industry. I've led the development of sleek, high performing web apps that scale, working remotely with global teams to deliver exceptional user experiences. Passionate about turning ideas into\n                polished, responsive interfaces that drive growth.\nThroughout my career I have worked across Serbia, the UK, and the US in teams ranging from 10 to 100 people, contributing to product\ndevelopment in international and fast-moving environments.\nI thrive in roles where I can connect backend architecture with user facing experiences, always keeping performance, accessibility, and\nmaintainability at the center.\nOver the years I have built:\n- Education platforms with adaptive learning, gamified dashboards, and real-time progress tracking.\n- Restaurant & delivery apps for online ordering, loyalty/points, and full payment/dispatch workflows.\n- E-commerce systems handling product catalogs, checkout, coupons, and logistics integrations.\nI am passionate about clean, scalable code and about collaborating with designers, product managers, and stakeholders to translate\nrequirements into meaningful solutions.\nMy work consistently reduces technical debt, improves time to-market, and enhances user satisfaction through measurable\nimprovements in performance and usability.\nAs I continue to grow my career, I'm especially motivated by projects where technology directly improves user experience - whether that's\nreducing waiting time in a restaurant, enabling faster deliveries, or making learning more accessible through digital platforms.",
+    "references": [],
+    "experience": [
+        {
+            "title": "Principal Software Engineer—Architect",
+            "company": "Schneider Electric (Nashville, TN)",
+            "period": "Jan 2022 - Dec 2025",
+            "skills": [
+                "React.js",
+                "Laravel",
+                "Next.js",
+                "Angular",
+                "Vue",
+                "TailwindCSS",
+                "Golang",
+                "Nest.js",
+                "Django",
+                "AWS",
+                "GCP",
+                "TDD",
+                "etc"
+            ],
+            "summary": "I have worked on several projects in various roles, including frontend, backend, DevOps, or a combination of these. I have also contributed to improving development processes and technology across the company.",
+            "highlights": [
+                "Architected databases and deployed applications using modern DevOps practices,sub-millisecond latency",
+                "Architected databases and deployed applications using modern DevOps practices.",
+                "Integrated machine learning models via AWS SageMaker, reducing data processing latency by 60%",
+                "Spearheaded multi-cloud disaster recovery strategies across AWS and Azure, achieving 99.999% system uptime",
+                "Leveraged Microsoft Azure for cloud-native architectures for data processing workflows",
+                "Built CMS and admin portals using React, Next.js, Tailwind CSS, enhancing mobile experience",
+                "Led the development of React Native applications, ensuring seamless mobile performance",
+                "Used Jest and react-test-renderer for unit testing and Cypress for end-to-end testing"
+            ]
+        },
+        {
+            "title": "Senior Full Stack Engineer",
+            "company": "Omnicom Media Group (New York, NY)",
+            "period": "AUG 2021 - DEC 2023",
+            "skills": [
+                "React.js",
+                "Next.js",
+                "Angular",
+                "Vue",
+                "TailwindCSS",
+                "Golang",
+                "Nest.js",
+                "Django",
+                "AWS",
+                "GCP",
+                "Bootstrap",
+                "Webpack",
+                "InvisionApp",
+                "Balsamiq",
+                "CircleCI",
+                "Jenkins",
+                "AWS"
+            ],
+            "summary": "Built and maintained an AI-driven platform that supports business decision-making. Worked mainly on the frontend side with Angular, NgRx and rxjs. Built a microservice using NestJS on the backend side with RabbitMQ for messaging. Mentored junior guys to let them grow in a collaborative team environment.",
+            "highlights": [
+                "Architected databases and deployed applications using modern DevOps practices,sub-millisecond latencyautomation systems",
+                "Designed and implemented mobile-first micro-frontend architecture with React.js and Webpack Module Federation",
+                "Developed and maintained GraphQL APIs with Node.js ( NestJS) and Python ( Django REST Framework)",
+                "Utilized caching strategies ( Redis, CDNs) and PostgreSQL sharding to improve data access speed",
+                "Integrated mobile-first design principles into the platform’s UI/UX",
+                "Automated infrastructure management with Terraform and Jenkins",
+                "Conducted code reviews for mid and junior level developers"
+            ]
+        },
+        {
+            "title": "Full Stack developer",
+            "company": "Solution Systems Inc (Chicago, IL)",
+            "period": "Jun 2019 - Jul 2021",
+            "skills": [],
+            "summary": "Contributed to building a Ticket Management System similar to ClickUp, built reusable components and integrated storybook for component testing. Collaborated with designers and product managers to ensure the interface was user-friendly and aligned with the business goals.",
+            "highlights": [
+                "Developed scalable RESTful APIs and data integration solutions using PHP ( Laravel) and Python ( Django)",
+                "Created interactive dashboards and visualization tools using Vue.js and D3.js",
+                "Managed database design and optimization for large MySQL and PostgreSQL",
+                "Led the adoption of Docker to improve development workflows",
+                "Implemented unit, integration, and end-to-end testing to reduce production defects",
+            ]
+        },
+        {
+            "title": "Junior Software Engineer",
+            "company": "TC Tech Systems (Round Rock, TX)",
+            "period": "Sep 2017 - May 2019",
+            "skills": [],
+            "summary": "Built and maintained a health insurance platform from the ground up. Used Laravel, Blade, jQuery, Bootstrap, MongoDB, RESTful API, Nginx, AWS.",
+            "highlights": [
+                "Developed and maintained scalable web applications using React, Angular, Vue, Laravel, Mongo Db, Express.js",
+                "Designed APIs and managed front-end development.",
+                "Architected databases and deployed applications using modern DevOps practices.",
+                "Optimized performance and implemented responsive UI/UX.",
+                "Integrated third-party services such as Stripe, Firebase, and RESTful APIs.",
+                "Contributed to several Shopify-based projects including theme customization and layout changes using Liquid.",
+                "Performed lightweight integrations with apps"
+            ]
+        }
+    ],
+    "skills": {
+        "Frontend Development": [
+            "React",
+            "redux",
+            "redux-thunk",
+            "Laravel",
+            "Inertia.js",
+            "Next.js",
+            "Angular",
+            "Vue",
+            "JavaScript",
+            "TypeScript",
+            "CSS",
+            "HTML",
+            "Bootstrap",
+            "TailwindCSS",
+            "Figma",
+            "InvisionApp",
+            "Zeplin"
+        ],
+        "Backend Development": [
+            "Node.js",
+            "Golang",
+            "Laravel",
+            "NestJS",
+            "Express",
+            "Python",
+            "Django",
+            "Flask",
+            "FastAPI",
+            "RESTful APIs",
+            "GraphQL",
+            "Redis",
+            "RabbitMQ",
+            "TypeORM"
+        ],
+        "Database Management": [
+            "MongoDB",
+            "PostgreSQL",
+            "MySQL",
+            "MSSQL"
+        ],
+        "Testing and Debugging": [
+            "Karma",
+            "Jest",
+            "Selenium",
+            "Cypress",
+            "Pytest"
+        ],
+        "Version Controlling System": [
+            "Git",
+            "Github",
+            "Gitlab",
+            "BitBucket"
+        ],
+        "Tools and DevOps": [
+            "Docker",
+            "Git",
+            "GitHub Actions",
+            "CircleCI",
+            "AWS",
+            "IPFS",
+            "Heroku",
+            "Vercel"
+        ],
+        "Project Management": [
+            "Agile Methodology",
+            "Jira",
+            "Confluence"
+        ],
+        "Data Visualization": [
+            "D3.js",
+            "Chart.js"
+        ]
+    },
+    "education": {
+        "degree": "Bachelor of Software Engineering",
+        "university": "California State Polytechnic University SLO",
+        "period": "2013 to Sep 2017",
+        "description": "Major concentration in Software Development, Algorithm Design, and Database Management Systems with distinction."
+    }
+}

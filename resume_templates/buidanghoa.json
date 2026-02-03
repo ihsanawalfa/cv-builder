@@ -1,0 +1,149 @@
+{
+  "name": "Bui DangHoa",
+  "contact": {
+    "Email": "buidanghoa13@gmail.com",
+    "LinkedIn": "www.linkedin.com/in/dang-hoa-bui-52b22b3a5/"
+  },
+  "summary": "I'm a fullstack developer with over 5 years of experience building scalable web applications. Skilled in React.js, Next.js, TypeScript, Node.js, and Python, I focus on creating responsive interfaces and efficient backend APIs. I have experience with AWS, GCP, Azure, CI/CD pipelines, and database optimization with PostgreSQL and Elasticsearch. Passionate about AI and machine learning projects, I write clean, maintainable code and collaborate effectively with cross-functional teams to deliver impactful solutions.",
+  "references": [],
+  "experience": [
+    {
+      "title": "Senior Software Developer",
+      "company": "Braintrust",
+      "period": "Mar 2025 - Dec 2025",
+      "location": "Toronto, Ontario",
+      "workType": "Remote",
+      "skills": [
+        "React.js",
+        "Node.js",
+        "Python",
+        "Express.js",
+        "Flask",
+        "RESTful APIs",
+        "SaaS",
+        "AI-driven tools",
+        "Code generation",
+        "Automation"
+      ],
+      "summary": "Architected and implemented a highly scalable SaaS solution leveraging React.js, Node.js, and Python, achieving a 40% improvement in system performance and response latency. Integrated third-party AI-driven code generation and automation tools into the development pipeline.",
+      "highlights": [
+        "Architected and implemented a highly scalable SaaS solution leveraging React.js, Node.js, and Python, achieving a 40% improvement in system performance and response latency.",
+        "Integrated third-party AI-driven code generation and automation tools into the development pipeline, reducing manual effort by 20% and accelerating deployment cycles.",
+        "Developed and implemented robust RESTful API architectures using Express.js and Flask, ensuring high availability, scalability, and security. Conducted thorough API performance tuning and integration testing, resulting in a 30% reduction in latency and improved system stability."
+      ]
+    },
+    {
+      "title": "Fullstack Engineer",
+      "company": "Sun*Vietnam",
+      "period": "Jul 2022 - Dec 2024",
+      "location": "Hanoi",
+      "workType": "Hybrid",
+      "skills": [
+        "React",
+        "Next.js",
+        "Tailwind CSS",
+        "tRPC",
+        "REST",
+        "GraphQL",
+        "Prisma",
+        "PostgreSQL",
+        "Python",
+        "Azure",
+        "GCP",
+        "Docker",
+        "CI/CD",
+        "AI/ML",
+        "LLM"
+      ],
+      "summary": "Led the integration of AI and LLM capabilities into web applications, developed APIs using tRPC, REST, and GraphQL, and optimized database queries with Prisma and PostgreSQL, achieving a 30% improvement in data retrieval performance for AI-driven features.",
+      "highlights": [
+        "AI-Integrated Fullstack Development (40%): Led the integration of AI and LLM capabilities into web applications by collaborating closely with AI specialists. Developed APIs and backend logic using tRPC, REST, and GraphQL, ensuring smooth communication between AI models and frontend interfaces. Designed and optimized database queries with Prisma and PostgreSQL, achieving a 30% improvement in data retrieval performance for AI-driven features.",
+        "Frontend Engineering & User Experience (25%): Built responsive, user-friendly interfaces with React and Next.js, incorporating modern UI/UX practices. Implemented dynamic components using Tailwind CSS and optimized frontend performance, reducing load times by 20%. Worked with designers and product managers to deliver seamless AI-powered tools that enhanced user engagement.",
+        "Cloud Deployment & DevOps (15%): Managed deployment pipelines on Azure and GCP, utilizing Docker for containerization and implementing CI/CD workflows. Automated testing and deployment processes, which decreased release cycle times by 25%. Ensured high availability and system reliability through monitoring and observability tools.",
+        "AI Training & Skill Development (10%): Participated in structured AI training programs, gaining hands-on experience with AI/ML frameworks and tools. Applied new knowledge to real-world projects by developing AI inference APIs and preprocessing pipelines, accelerating project deployment timelines by 15%.",
+        "Collaboration & Agile Practices (10%): Worked within an Agile environment, conducting code reviews and pair programming sessions to ensure code quality and maintainability. Contributed to knowledge sharing sessions on AI integration and modern web tech, fostering a collaborative team culture and improving overall team productivity by 10%."
+      ]
+    },
+    {
+      "title": "Frontend Developer",
+      "company": "Crossian",
+      "period": "Mar 2021 - May 2022",
+      "location": "Hanoi",
+      "workType": "On-Site",
+      "skills": [
+        "ReactJS",
+        "NextJS",
+        "RESTful APIs",
+        "GraphQL",
+        "Sentry",
+        "Cloudflare",
+        "Kong"
+      ],
+      "summary": "Architected and implemented scalable frontend solutions using ReactJS and NextJS, resulting in a 20% reduction in initial load times and significantly enhancing overall application performance. Engineered API integrations with RESTful and GraphQL endpoints.",
+      "highlights": [
+        "Architected and implemented scalable frontend solutions using ReactJS and NextJS, resulting in a 20% reduction in initial load times and significantly enhancing overall application performance.",
+        "Engineered API integrations with RESTful and GraphQL endpoints, decreasing data retrieval latency by 25% and supporting real-time data synchronization.",
+        "Optimized cross-browser and cross-device compatibility through rigorous testing and responsive design principles, achieving a 98% success rate across diverse environments.",
+        "Leveraged monitoring and logging tools such as Sentry, Cloudflare, and Kong to proactively identify and resolve performance bottlenecks, leading to a 40% decrease in frontend errors and improved system stability."
+      ]
+    }
+  ],
+  "skills": {
+    "Frontend": [
+      "Recoil",
+      "React.js",
+      "Angular.js",
+      "Next.js",
+      "TypeScript",
+      "Redux",
+      "Zustand",
+      "Tailwind CSS"
+    ],
+    "Backend": [
+      "Node.js",
+      "Express.js",
+      "GraphQL",
+      "Python"
+    ],
+    "Database": [
+      "MySQL",
+      "PostgreSQL",
+      "Firebase"
+    ],
+    "Cloud & DevOps": [
+      "AWS",
+      "GCP",
+      "Azure",
+      "Docker",
+      "Kubernetes",
+      "GitHub Actions",
+      "GitLab CI",
+      "Jenkins"
+    ],
+    "AI & ML": [
+      "PyTorch",
+      "TensorFlow",
+      "OpenAI API",
+      "TorchServe"
+    ],
+    "Testing & Monitoring": [
+      "Jest",
+      "React Testing Library",
+      "Cypress",
+      "ESLint",
+      "Prettier"
+    ],
+    "Version Control & Collaboration": [
+      "Git",
+      "GitHub",
+      "GitLab",
+      "Bitbucket"
+    ]
+  },
+  "education": {
+    "degree": "Bachelor's Degree",
+    "university": "Industrial University of Ho Chi Minh City",
+    "period": "Apr 2016 - Nov 2020",
+    "location": "Ho Chi Minh City"
+  }
+}

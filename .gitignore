@@ -1,0 +1,33 @@
+venv
+output
+.env
+__pycache__
+# Generated resume files
+generated/
+resume_outputs/
+resume_structures/
+tailored_resumes/
+
+# Node dependencies and build
+node_modules/
+dist/
+build/
+.next/
+
+# Development environment
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Coverage and test reports
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Package files
+*.egg-info/
+dist/
+build/
+users.json
