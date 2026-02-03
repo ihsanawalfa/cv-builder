@@ -1,0 +1,31 @@
+[
+    {
+        "username": "rusuland9@gmail.com",
+        "password": "123456789qwe.",
+        "role": "admin"
+    },
+    {
+        "username": "andrew",
+        "password": "an123!@#",
+        "role": "user",
+        "allowed_template": "andrew-santoli.json"
+    },
+    {
+        "username": "buidanghoa13@gmail.com",
+        "password": "12345678",
+        "role": "user",
+        "allowed_template": "buidanghoa.json"
+    },
+    {
+        "username": "zack",
+        "password": "za123!@#",
+        "role": "user",
+        "allowed_template": "zackary-fraser.json"
+    },
+    {
+        "username": "Ihsan",
+        "password": "ihsan123",
+        "role": "user",
+        "allowed_template": "Ihsan.json"
+    }
+]
