@@ -1,6 +1,6 @@
 from venv import logger
 
-from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi import FastAPI, HTTPException, Depends, status, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -17,6 +17,15 @@ from datetime import datetime, timedelta
 import jwt
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
+import pandas as pd
+import zipfile
+import tempfile
+import shutil
+try:
+    import xlrd
+    HAS_XLRD = True
+except ImportError:
+    HAS_XLRD = False
 
 # Import custom modules
 from markdown_utils import generate_pdf_from_json, generate_pdf_from_markdown
@@ -319,6 +328,219 @@ async def tailor_resume_endpoint(job_data: JobSubmission, current_user: dict = D
         print(f"Full traceback: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error tailoring resume: {str(e)}")
 
+@app.post("/tailor-resume-batch")
+async def tailor_resume_batch_endpoint(
+    file: UploadFile = File(...),
+    template: str = Form(...),
+    cover_letter_only: bool = Form(False),
+    current_user: dict = Depends(get_current_user)
+):
+    """Generate multiple tailored resumes based on Excel file with Title and Description columns."""
+    # Check if user has access to the requested template
+    user_role = current_user.get("role", "user")
+    if user_role != "admin":
+        allowed_template = current_user.get("allowed_template")
+        if allowed_template and template != allowed_template:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"You don't have permission to use template '{template}'. You can only use '{allowed_template}'."
+            )
+    
+    # Validate file type
+    if not file.filename.endswith(('.xlsx', '.xls')):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be an Excel file (.xlsx or .xls)"
+        )
+    
+    # Save uploaded file temporarily
+    temp_dir = tempfile.mkdtemp()
+    temp_file_path = Path(temp_dir) / file.filename
+    
+    try:
+            with open(temp_file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            
+            # Read Excel file - handle both .xls and .xlsx formats
+            file_ext = temp_file_path.suffix.lower()
+            if file_ext == '.xls':
+                # For .xls files, read directly with xlrd and convert to DataFrame
+                # This bypasses pandas' version check for xlrd
+                try:
+                    import xlrd
+                    workbook = xlrd.open_workbook(temp_file_path)
+                    sheet = workbook.sheet_by_index(0)
+                    
+                    # Read headers from first row
+                    headers = [str(sheet.cell_value(0, col)) for col in range(sheet.ncols)]
+                    
+                    # Read data rows
+                    data = []
+                    for row_idx in range(1, sheet.nrows):
+                        row_data = [sheet.cell_value(row_idx, col) for col in range(sheet.ncols)]
+                        data.append(row_data)
+                    
+                    # Create DataFrame
+                    df = pd.DataFrame(data, columns=headers)
+                except Exception as e:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail=f"Error reading .xls file: {str(e)}. Please ensure the file is a valid Excel file."
+                    )
+            else:
+                # Use openpyxl engine for .xlsx files
+                df = pd.read_excel(temp_file_path, engine='openpyxl')
+            
+            # Validate required columns
+            required_columns = ['Title', 'Description']
+            missing_columns = [col for col in required_columns if col not in df.columns]
+            if missing_columns:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Excel file must contain columns: {', '.join(required_columns)}. Missing: {', '.join(missing_columns)}"
+                )
+            
+            # Extract template name
+            template_name = os.path.splitext(os.path.basename(template))[0] if template else "default"
+            template_file = f"resume_templates/{template}"
+            
+            # Create built_resume directory structure
+            built_resume_dir = Path("built_resume")
+            built_resume_dir.mkdir(exist_ok=True)
+            
+            # Create temporary directory for batch outputs (for ZIP)
+            batch_output_dir = Path(temp_dir) / "batch_output"
+            batch_output_dir.mkdir(exist_ok=True)
+            
+            generated_files = []
+            errors = []
+            
+            # Process each row
+            for index, row in df.iterrows():
+                try:
+                    job_title = str(row['Title']).strip()
+                    job_description = str(row['Description']).strip()
+                    
+                    # Skip empty rows
+                    if not job_title or not job_description or job_title == 'nan' or job_description == 'nan':
+                        continue
+                    
+                    # Sanitize job title for folder name (remove invalid characters)
+                    safe_title = "".join(c for c in job_title if c.isalnum() or c in (' ', '-', '_', '.')).strip()
+                    safe_title = safe_title.replace(' ', '_')
+                    # Remove any remaining invalid characters and limit length
+                    safe_title = "".join(c for c in safe_title if c.isalnum() or c in ('_', '-', '.'))[:100]
+                    
+                    # Create folder for this job title in built_resume
+                    job_folder = built_resume_dir / safe_title
+                    job_folder.mkdir(exist_ok=True)
+                    
+                    # Tailor the resume
+                    json_path, tailored_resume = tailor_resume(job_description, model, template_file)
+                    
+                    # Generate files for this job
+                    file_prefix = f"{safe_title}_{index + 1}"
+                    
+                    # Generate resume PDF if requested
+                    if not cover_letter_only:
+                        # Save resume in the job title folder
+                        resume_pdf_path = job_folder / "resume.pdf"
+                        generate_pdf_from_json(tailored_resume, resume_pdf_path)
+                        
+                        # Also copy to batch_output for ZIP (maintaining folder structure)
+                        zip_resume_path = batch_output_dir / safe_title / "resume.pdf"
+                        zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
+                        shutil.copy2(resume_pdf_path, zip_resume_path)
+                        
+                        generated_files.append({
+                            "type": "resume",
+                            "title": job_title,
+                            "folder": safe_title,
+                            "filename": "resume.pdf",
+                            "path": str(resume_pdf_path),
+                            "zip_path": str(zip_resume_path)
+                        })
+                    
+                    # Generate cover letter
+                    cover_letter_path = generate_cover_letter(tailored_resume, job_description, model, file_prefix)
+                    if cover_letter_path and cover_letter_path.exists():
+                        # Move cover letter to job title folder
+                        job_cover_letter_path = job_folder / "cover_letter.pdf"
+                        if str(cover_letter_path) != str(job_cover_letter_path):
+                            shutil.move(str(cover_letter_path), str(job_cover_letter_path))
+                        
+                        # Also move the markdown file if it exists (check in OUTPUT_DIR)
+                        markdown_filename = cover_letter_path.name.replace('.pdf', '.md')
+                        original_markdown_path = OUTPUT_DIR / markdown_filename
+                        if original_markdown_path.exists():
+                            job_markdown_path = job_folder / "cover_letter.md"
+                            shutil.move(str(original_markdown_path), str(job_markdown_path))
+                        
+                        # Also copy to batch_output for ZIP (maintaining folder structure)
+                        zip_cover_letter_path = batch_output_dir / safe_title / "cover_letter.pdf"
+                        zip_cover_letter_path.parent.mkdir(exist_ok=True, parents=True)
+                        shutil.copy2(job_cover_letter_path, zip_cover_letter_path)
+                        
+                        generated_files.append({
+                            "type": "cover_letter",
+                            "title": job_title,
+                            "folder": safe_title,
+                            "filename": "cover_letter.pdf",
+                            "path": str(job_cover_letter_path),
+                            "zip_path": str(zip_cover_letter_path)
+                        })
+                
+                except Exception as e:
+                    errors.append({
+                        "row": index + 1,
+                        "title": str(row.get('Title', 'Unknown')),
+                        "error": str(e)
+                    })
+                    continue
+            
+            if not generated_files:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="No valid rows found in Excel file or all rows failed to process"
+                )
+            
+            # Create zip file with folder structure
+            zip_filename = f"batch_resumes_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
+            zip_path = Path(temp_dir) / zip_filename
+            
+            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                # Walk through batch_output_dir to maintain folder structure
+                for root, dirs, files in os.walk(batch_output_dir):
+                    for file in files:
+                        file_path = Path(root) / file
+                        # Get relative path from batch_output_dir to maintain structure
+                        arcname = file_path.relative_to(batch_output_dir)
+                        zipf.write(file_path, arcname)
+            
+            # Move zip to output directory for download
+            output_zip_path = OUTPUT_DIR / zip_filename
+            shutil.move(zip_path, output_zip_path)
+            
+            # Cleanup temp directory
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            
+            return {
+                "zip_url": f"/download/batch/{zip_filename}",
+                "files_count": len(generated_files),
+                "errors": errors if errors else None
+            }
+        
+    except HTTPException:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        raise
+    except Exception as e:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Error in tailor_resume_batch_endpoint: {str(e)}")
+        print(f"Full traceback: {error_details}")
+        raise HTTPException(status_code=500, detail=f"Error processing batch: {str(e)}")
+
 @app.get("/download/resume/{filename}")
 async def download_resume(filename: str, mode: Optional[str] = None):
     """Download a generated resume."""
@@ -364,6 +586,19 @@ async def download_cover_letter(filename: str, mode: Optional[str] = None):
             media_type="application/pdf",
             headers={"Content-Disposition": "inline"}
         )
+
+@app.get("/download/batch/{filename}")
+async def download_batch(filename: str):
+    """Download a batch zip file."""
+    file_path = OUTPUT_DIR / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Batch file not found")
+    
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        media_type="application/zip"
+    )
 
 @app.get("/templates")
 async def get_templates(current_user: dict = Depends(get_current_user)):
