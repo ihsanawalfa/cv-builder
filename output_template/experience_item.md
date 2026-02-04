@@ -1,4 +1,4 @@
-<div class="experience-entry" style="margin-bottom: 1.5em;">
+<div class="experience-entry" style="margin: 2em 0;">
   <table style="width: 100%; border-collapse: collapse; margin-bottom: 0.5em;">
     <tr>
       <td style="color: #0A3662; font-size: 10pt; font-weight: bold; padding: 0; vertical-align: baseline;">
@@ -12,6 +12,6 @@
   <p style="color: #666; margin: 0.2em 0;">
     <span style="font-weight: 500;">{{location}}</span>
   </p>
-  <p style="margin: 0.8em 0;">{{description}}</p>
+  <p style="margin:0; padding:0">{{description}}</p>
 {{highlights}}
 </div>
