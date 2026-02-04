@@ -23,6 +23,7 @@ import tempfile
 import shutil
 import re
 import requests
+import asyncio
 from urllib.parse import urlparse, parse_qs
 try:
     import xlrd
@@ -105,6 +106,10 @@ model = OpenAIModelWrapper(client)
 OUTPUT_DIR = Path("output")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
+# Batch concurrency (controls how many rows are processed in parallel)
+# Note: higher values can trigger OpenAI rate limits or high CPU usage during PDF generation.
+BATCH_MAX_CONCURRENCY = int(os.getenv("BATCH_MAX_CONCURRENCY", "3"))
+
 # Helper function to normalize template name (case-insensitive file matching)
 def normalize_template_name(template_name: str) -> str:
     """
@@ -131,6 +136,123 @@ def normalize_template_name(template_name: str) -> str:
     
     # If not found, return original (will cause error later, but preserves original behavior)
     return template_name
+
+def _process_one_batch_job(
+    *,
+    row_number: int,
+    job_title: str,
+    job_description: str,
+    questions: List[str],
+    safe_title: str,
+    built_resume_dir: Path,
+    batch_output_dir: Path,
+    template_file: str,
+    model,
+    file_prefix: str
+):
+    """
+    Synchronous per-row job processor (runs in a worker thread via asyncio.to_thread).
+    Returns: (generated_files_for_row: List[dict], errors_for_row: List[dict])
+    """
+    generated_files_for_row: List[dict] = []
+    errors_for_row: List[dict] = []
+
+    try:
+        # Create folder for this job title in built_resume
+        job_folder = built_resume_dir / safe_title
+        job_folder.mkdir(exist_ok=True)
+
+        # Tailor the resume (OpenAI call)
+        _, tailored_resume = tailor_resume(job_description, model, template_file)
+
+        # Resume filename based on person's name in template JSON
+        person_name = tailored_resume.get('name', 'Resume') if isinstance(tailored_resume, dict) else 'Resume'
+        safe_name = "".join(c for c in person_name if c.isalnum())[:50] if person_name else "Resume"
+        resume_filename = f"{safe_name}_resume.pdf"
+
+        # Generate resume PDF
+        resume_pdf_path = job_folder / resume_filename
+        generate_pdf_from_json(tailored_resume, resume_pdf_path)
+
+        zip_resume_path = batch_output_dir / safe_title / resume_filename
+        zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
+        shutil.copy2(resume_pdf_path, zip_resume_path)
+        generated_files_for_row.append({
+            "type": "resume",
+            "title": job_title,
+            "folder": safe_title,
+            "filename": resume_filename,
+            "path": str(resume_pdf_path),
+            "zip_path": str(zip_resume_path)
+        })
+
+        # Generate cover letter
+        cover_letter_path = generate_cover_letter(tailored_resume, job_description, model, file_prefix)
+        if cover_letter_path and cover_letter_path.exists():
+            job_cover_letter_path = job_folder / "cover_letter.pdf"
+            if str(cover_letter_path) != str(job_cover_letter_path):
+                shutil.move(str(cover_letter_path), str(job_cover_letter_path))
+
+            markdown_filename = cover_letter_path.name.replace('.pdf', '.md')
+            original_markdown_path = OUTPUT_DIR / markdown_filename
+            if original_markdown_path.exists():
+                job_markdown_path = job_folder / "cover_letter.md"
+                shutil.move(str(original_markdown_path), str(job_markdown_path))
+
+            zip_cover_letter_path = batch_output_dir / safe_title / "cover_letter.pdf"
+            zip_cover_letter_path.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copy2(job_cover_letter_path, zip_cover_letter_path)
+            generated_files_for_row.append({
+                "type": "cover_letter",
+                "title": job_title,
+                "folder": safe_title,
+                "filename": "cover_letter.pdf",
+                "path": str(job_cover_letter_path),
+                "zip_path": str(zip_cover_letter_path)
+            })
+
+        # Generate question answers PDF if questions exist
+        if questions:
+            try:
+                answers = generate_question_answers(questions, job_description, tailored_resume, model)
+                question_markdown = "# Question\n\n"
+                for i, (question, answer) in enumerate(zip(questions, answers), 1):
+                    question_markdown += f"## Question {i}\n\n"
+                    question_markdown += f"{question}\n\n"
+                    question_markdown += f"### Answer\n\n"
+                    question_markdown += f"{answer}\n\n"
+                    question_markdown += "---\n\n"
+
+                question_pdf_path = job_folder / "question.pdf"
+                generate_pdf_from_markdown(question_markdown, question_pdf_path)
+
+                zip_question_path = batch_output_dir / safe_title / "question.pdf"
+                zip_question_path.parent.mkdir(exist_ok=True, parents=True)
+                shutil.copy2(question_pdf_path, zip_question_path)
+                generated_files_for_row.append({
+                    "type": "question",
+                    "title": job_title,
+                    "folder": safe_title,
+                    "filename": "question.pdf",
+                    "path": str(question_pdf_path),
+                    "zip_path": str(zip_question_path)
+                })
+            except Exception as e:
+                print(f"Error generating question PDF for {job_title}: {str(e)}")
+                errors_for_row.append({
+                    "row": row_number,
+                    "title": job_title,
+                    "error": f"Failed to generate question PDF: {str(e)}"
+                })
+
+    except Exception as e:
+        errors_for_row.append({
+            "row": row_number,
+            "title": job_title,
+            "error": str(e)
+        })
+
+    return generated_files_for_row, errors_for_row
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -543,140 +665,60 @@ async def tailor_resume_batch_endpoint(
             
             generated_files = []
             errors = []
-            
-            # Process each row
+
+            # Build row payloads (avoid passing pandas objects to threads)
+            row_payloads = []
             for index, row in df.iterrows():
-                try:
-                    job_title = str(row['Title']).strip()
-                    job_description = str(row['Description']).strip()
-                    
-                    # Skip empty rows
-                    if not job_title or not job_description or job_title == 'nan' or job_description == 'nan':
-                        continue
-                    
-                    # Extract questions from question columns
-                    questions = []
-                    for q_col in question_columns:
-                        q_value = str(row.get(q_col, '')).strip()
-                        if q_value and q_value != 'nan' and q_value:
-                            questions.append(q_value)
-                    
-                    # Sanitize job title for folder name (remove invalid characters)
-                    safe_title = "".join(c for c in job_title if c.isalnum() or c in (' ', '-', '_', '.')).strip()
-                    safe_title = safe_title.replace(' ', '_')
-                    # Remove any remaining invalid characters and limit length
-                    safe_title = "".join(c for c in safe_title if c.isalnum() or c in ('_', '-', '.'))[:100]
-                    
-                    # Create folder for this job title in built_resume
-                    job_folder = built_resume_dir / safe_title
-                    job_folder.mkdir(exist_ok=True)
-                    
-                    # Tailor the resume
-                    json_path, tailored_resume = tailor_resume(job_description, model, template_file)
-                    
-                    # Extract name from tailored resume for filename
-                    person_name = tailored_resume.get('name', 'Resume') if isinstance(tailored_resume, dict) else 'Resume'
-                    # Sanitize name: remove spaces and special characters, keep only alphanumeric
-                    safe_name = "".join(c for c in person_name if c.isalnum())[:50] if person_name else "Resume"
-                    resume_filename = f"{safe_name}_resume.pdf"
-                    
-                    # Generate files for this job
-                    file_prefix = f"{safe_title}_{index + 1}"
-                    
-                    # Generate resume PDF (always generate for batch)
-                    resume_pdf_path = job_folder / resume_filename
-                    generate_pdf_from_json(tailored_resume, resume_pdf_path)
-                    
-                    # Also copy to batch_output for ZIP (maintaining folder structure)
-                    zip_resume_path = batch_output_dir / safe_title / resume_filename
-                    zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
-                    shutil.copy2(resume_pdf_path, zip_resume_path)
-                    
-                    generated_files.append({
-                        "type": "resume",
-                        "title": job_title,
-                        "folder": safe_title,
-                        "filename": resume_filename,
-                        "path": str(resume_pdf_path),
-                        "zip_path": str(zip_resume_path)
-                    })
-                    
-                    # Generate cover letter (always generate for batch)
-                    cover_letter_path = generate_cover_letter(tailored_resume, job_description, model, file_prefix)
-                    if cover_letter_path and cover_letter_path.exists():
-                        # Move cover letter to job title folder
-                        job_cover_letter_path = job_folder / "cover_letter.pdf"
-                        if str(cover_letter_path) != str(job_cover_letter_path):
-                            shutil.move(str(cover_letter_path), str(job_cover_letter_path))
-                        
-                        # Also move the markdown file if it exists (check in OUTPUT_DIR)
-                        markdown_filename = cover_letter_path.name.replace('.pdf', '.md')
-                        original_markdown_path = OUTPUT_DIR / markdown_filename
-                        if original_markdown_path.exists():
-                            job_markdown_path = job_folder / "cover_letter.md"
-                            shutil.move(str(original_markdown_path), str(job_markdown_path))
-                        
-                        # Also copy to batch_output for ZIP (maintaining folder structure)
-                        zip_cover_letter_path = batch_output_dir / safe_title / "cover_letter.pdf"
-                        zip_cover_letter_path.parent.mkdir(exist_ok=True, parents=True)
-                        shutil.copy2(job_cover_letter_path, zip_cover_letter_path)
-                        
-                        generated_files.append({
-                            "type": "cover_letter",
-                            "title": job_title,
-                            "folder": safe_title,
-                            "filename": "cover_letter.pdf",
-                            "path": str(job_cover_letter_path),
-                            "zip_path": str(zip_cover_letter_path)
-                        })
-                    
-                    # Generate question answers PDF if questions exist
-                    if questions and len(questions) > 0:
-                        try:
-                            answers = generate_question_answers(questions, job_description, tailored_resume, model)
-                            
-                            # Create markdown content for questions PDF
-                            question_markdown = "# Question\n\n"
-                            for i, (question, answer) in enumerate(zip(questions, answers), 1):
-                                question_markdown += f"## Question {i}\n\n"
-                                question_markdown += f"{question}\n\n"
-                                question_markdown += f"### Answer\n\n"
-                                question_markdown += f"{answer}\n\n"
-                                question_markdown += "---\n\n"
-                            
-                            # Generate PDF from markdown
-                            question_pdf_path = job_folder / "question.pdf"
-                            generate_pdf_from_markdown(question_markdown, question_pdf_path)
-                            
-                            # Also copy to batch_output for ZIP
-                            zip_question_path = batch_output_dir / safe_title / "question.pdf"
-                            zip_question_path.parent.mkdir(exist_ok=True, parents=True)
-                            shutil.copy2(question_pdf_path, zip_question_path)
-                            
-                            generated_files.append({
-                                "type": "question",
-                                "title": job_title,
-                                "folder": safe_title,
-                                "filename": "question.pdf",
-                                "path": str(question_pdf_path),
-                                "zip_path": str(zip_question_path)
-                            })
-                        except Exception as e:
-                            # Log error but don't fail the whole row
-                            print(f"Error generating question PDF for {job_title}: {str(e)}")
-                            errors.append({
-                                "row": index + 1,
-                                "title": job_title,
-                                "error": f"Failed to generate question PDF: {str(e)}"
-                            })
-                
-                except Exception as e:
-                    errors.append({
-                        "row": index + 1,
-                        "title": str(row.get('Title', 'Unknown')),
-                        "error": str(e)
-                    })
+                job_title = str(row.get('Title', '')).strip()
+                job_description = str(row.get('Description', '')).strip()
+
+                # Skip empty rows
+                if not job_title or not job_description or job_title == 'nan' or job_description == 'nan':
                     continue
+
+                # Extract questions from question columns
+                questions = []
+                for q_col in question_columns:
+                    q_value = str(row.get(q_col, '')).strip()
+                    if q_value and q_value != 'nan':
+                        questions.append(q_value)
+
+                safe_title = "".join(c for c in job_title if c.isalnum() or c in (' ', '-', '_', '.')).strip()
+                safe_title = safe_title.replace(' ', '_')
+                safe_title = "".join(c for c in safe_title if c.isalnum() or c in ('_', '-', '.'))[:100]
+
+                row_payloads.append({
+                    "row_number": index + 1,
+                    "job_title": job_title,
+                    "job_description": job_description,
+                    "questions": questions,
+                    "safe_title": safe_title,
+                    "file_prefix": f"{safe_title}_{index + 1}"
+                })
+
+            # Run rows concurrently (one request; multiple worker threads)
+            sem = asyncio.Semaphore(max(1, BATCH_MAX_CONCURRENCY))
+
+            async def run_one(payload: dict):
+                async with sem:
+                    return await asyncio.to_thread(
+                        _process_one_batch_job,
+                        row_number=payload["row_number"],
+                        job_title=payload["job_title"],
+                        job_description=payload["job_description"],
+                        questions=payload["questions"],
+                        safe_title=payload["safe_title"],
+                        built_resume_dir=built_resume_dir,
+                        batch_output_dir=batch_output_dir,
+                        template_file=template_file,
+                        model=model,
+                        file_prefix=payload["file_prefix"]
+                    )
+
+            results = await asyncio.gather(*(run_one(p) for p in row_payloads))
+            for files_for_row, errors_for_row in results:
+                generated_files.extend(files_for_row)
+                errors.extend(errors_for_row)
             
             if not generated_files:
                 raise HTTPException(
@@ -760,6 +802,7 @@ async def tailor_resume_batch_google_sheets_endpoint(
     generated_files = []
     errors = []
     row_index = 0
+    row_payloads = []
     
     try:
         # Process each Google Sheets link
@@ -770,142 +813,37 @@ async def tailor_resume_batch_google_sheets_endpoint(
                 
                 # Process each row from the sheet
                 for row_data in sheet_rows:
-                    try:
-                        row_index += 1
-                        job_title = row_data.get('Title', '').strip()
-                        job_description = row_data.get('Description', '').strip()
-                        
-                        if not job_title or not job_description:
-                            continue
-                        
-                        # Extract questions from row data (find question columns)
-                        questions = []
-                        question_keys = []
-                        for key in row_data.keys():
-                            if key.lower().startswith('question') and key.lower() != 'question':
-                                question_keys.append(key)
-                        # Sort question columns by number
-                        question_keys.sort(key=lambda x: int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 999)
-                        # Extract question values in order
-                        for q_key in question_keys:
-                            q_value = str(row_data.get(q_key, '')).strip()
-                            if q_value and q_value != 'nan':
-                                questions.append(q_value)
-                        
-                        # Sanitize job title for folder name
-                        safe_title = "".join(c for c in job_title if c.isalnum() or c in (' ', '-', '_', '.')).strip()
-                        safe_title = safe_title.replace(' ', '_')
-                        safe_title = "".join(c for c in safe_title if c.isalnum() or c in ('_', '-', '.'))[:100]
-                        
-                        # Create folder for this job title in built_resume
-                        job_folder = built_resume_dir / safe_title
-                        job_folder.mkdir(exist_ok=True)
-                        
-                        # Tailor the resume
-                        json_path, tailored_resume = tailor_resume(job_description, model, template_file)
-                        
-                        # Extract name from tailored resume for filename
-                        person_name = tailored_resume.get('name', 'Resume') if isinstance(tailored_resume, dict) else 'Resume'
-                        # Sanitize name: remove spaces and special characters, keep only alphanumeric
-                        safe_name = "".join(c for c in person_name if c.isalnum())[:50] if person_name else "Resume"
-                        resume_filename = f"{safe_name}_resume.pdf"
-                        
-                        # Generate files for this job
-                        file_prefix = f"{safe_title}_{row_index}"
-                        
-                        # Generate resume PDF (always generate for batch)
-                        resume_pdf_path = job_folder / resume_filename
-                        generate_pdf_from_json(tailored_resume, resume_pdf_path)
-                        
-                        # Also copy to batch_output for ZIP
-                        zip_resume_path = batch_output_dir / safe_title / resume_filename
-                        zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
-                        shutil.copy2(resume_pdf_path, zip_resume_path)
-                        
-                        generated_files.append({
-                            "type": "resume",
-                            "title": job_title,
-                            "folder": safe_title,
-                            "filename": resume_filename,
-                            "path": str(resume_pdf_path),
-                            "zip_path": str(zip_resume_path)
-                        })
-                        
-                        # Generate cover letter (always generate for batch)
-                        cover_letter_path = generate_cover_letter(tailored_resume, job_description, model, file_prefix)
-                        if cover_letter_path and cover_letter_path.exists():
-                            job_cover_letter_path = job_folder / "cover_letter.pdf"
-                            if str(cover_letter_path) != str(job_cover_letter_path):
-                                shutil.move(str(cover_letter_path), str(job_cover_letter_path))
-                            
-                            # Also move the markdown file if it exists
-                            markdown_filename = cover_letter_path.name.replace('.pdf', '.md')
-                            original_markdown_path = OUTPUT_DIR / markdown_filename
-                            if original_markdown_path.exists():
-                                job_markdown_path = job_folder / "cover_letter.md"
-                                shutil.move(str(original_markdown_path), str(job_markdown_path))
-                            
-                            # Also copy to batch_output for ZIP
-                            zip_cover_letter_path = batch_output_dir / safe_title / "cover_letter.pdf"
-                            zip_cover_letter_path.parent.mkdir(exist_ok=True, parents=True)
-                            shutil.copy2(job_cover_letter_path, zip_cover_letter_path)
-                            
-                            generated_files.append({
-                                "type": "cover_letter",
-                                "title": job_title,
-                                "folder": safe_title,
-                                "filename": "cover_letter.pdf",
-                                "path": str(job_cover_letter_path),
-                                "zip_path": str(zip_cover_letter_path)
-                            })
-                        
-                        # Generate question answers PDF if questions exist
-                        if questions and len(questions) > 0:
-                            try:
-                                answers = generate_question_answers(questions, job_description, tailored_resume, model)
-                                
-                                # Create markdown content for questions PDF
-                                question_markdown = "# Question\n\n"
-                                for i, (question, answer) in enumerate(zip(questions, answers), 1):
-                                    question_markdown += f"## Question {i}\n\n"
-                                    question_markdown += f"{question}\n\n"
-                                    question_markdown += f"### Answer\n\n"
-                                    question_markdown += f"{answer}\n\n"
-                                    question_markdown += "---\n\n"
-                                
-                                # Generate PDF from markdown
-                                question_pdf_path = job_folder / "question.pdf"
-                                generate_pdf_from_markdown(question_markdown, question_pdf_path)
-                                
-                                # Also copy to batch_output for ZIP
-                                zip_question_path = batch_output_dir / safe_title / "question.pdf"
-                                zip_question_path.parent.mkdir(exist_ok=True, parents=True)
-                                shutil.copy2(question_pdf_path, zip_question_path)
-                                
-                                generated_files.append({
-                                    "type": "question",
-                                    "title": job_title,
-                                    "folder": safe_title,
-                                    "filename": "question.pdf",
-                                    "path": str(question_pdf_path),
-                                    "zip_path": str(zip_question_path)
-                                })
-                            except Exception as e:
-                                # Log error but don't fail the whole row
-                                print(f"Error generating question PDF for {job_title}: {str(e)}")
-                                errors.append({
-                                    "row": row_index,
-                                    "title": job_title,
-                                    "error": f"Failed to generate question PDF: {str(e)}"
-                                })
-                    
-                    except Exception as e:
-                        errors.append({
-                            "row": row_index,
-                            "title": job_title if 'job_title' in locals() else "Unknown",
-                            "error": str(e)
-                        })
+                    row_index += 1
+                    job_title = row_data.get('Title', '').strip()
+                    job_description = row_data.get('Description', '').strip()
+
+                    if not job_title or not job_description:
                         continue
+
+                    # Extract questions from row data (find question columns)
+                    questions = []
+                    question_keys = []
+                    for key in row_data.keys():
+                        if key.lower().startswith('question') and key.lower() != 'question':
+                            question_keys.append(key)
+                    question_keys.sort(key=lambda x: int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 999)
+                    for q_key in question_keys:
+                        q_value = str(row_data.get(q_key, '')).strip()
+                        if q_value and q_value != 'nan':
+                            questions.append(q_value)
+
+                    safe_title = "".join(c for c in job_title if c.isalnum() or c in (' ', '-', '_', '.')).strip()
+                    safe_title = safe_title.replace(' ', '_')
+                    safe_title = "".join(c for c in safe_title if c.isalnum() or c in ('_', '-', '.'))[:100]
+
+                    row_payloads.append({
+                        "row_number": row_index,
+                        "job_title": job_title,
+                        "job_description": job_description,
+                        "questions": questions,
+                        "safe_title": safe_title,
+                        "file_prefix": f"{safe_title}_{row_index}"
+                    })
             
             except Exception as e:
                 errors.append({
@@ -914,6 +852,30 @@ async def tailor_resume_batch_google_sheets_endpoint(
                     "error": f"Failed to process Google Sheet: {str(e)}"
                 })
                 continue
+
+        # Run rows concurrently (one request; multiple worker threads)
+        sem = asyncio.Semaphore(max(1, BATCH_MAX_CONCURRENCY))
+
+        async def run_one(payload: dict):
+            async with sem:
+                return await asyncio.to_thread(
+                    _process_one_batch_job,
+                    row_number=payload["row_number"],
+                    job_title=payload["job_title"],
+                    job_description=payload["job_description"],
+                    questions=payload["questions"],
+                    safe_title=payload["safe_title"],
+                    built_resume_dir=built_resume_dir,
+                    batch_output_dir=batch_output_dir,
+                    template_file=template_file,
+                    model=model,
+                    file_prefix=payload["file_prefix"]
+                )
+
+        results = await asyncio.gather(*(run_one(p) for p in row_payloads))
+        for files_for_row, errors_for_row in results:
+            generated_files.extend(files_for_row)
+            errors.extend(errors_for_row)
         
         if not generated_files:
             raise HTTPException(
