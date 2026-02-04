@@ -545,15 +545,21 @@ async def tailor_resume_batch_endpoint(
                     # Tailor the resume
                     json_path, tailored_resume = tailor_resume(job_description, model, template_file)
                     
+                    # Extract name from tailored resume for filename
+                    person_name = tailored_resume.get('name', 'Resume') if isinstance(tailored_resume, dict) else 'Resume'
+                    # Sanitize name: remove spaces and special characters, keep only alphanumeric
+                    safe_name = "".join(c for c in person_name if c.isalnum())[:50] if person_name else "Resume"
+                    resume_filename = f"{safe_name}_resume.pdf"
+                    
                     # Generate files for this job
                     file_prefix = f"{safe_title}_{index + 1}"
                     
                     # Generate resume PDF (always generate for batch)
-                    resume_pdf_path = job_folder / "resume.pdf"
+                    resume_pdf_path = job_folder / resume_filename
                     generate_pdf_from_json(tailored_resume, resume_pdf_path)
                     
                     # Also copy to batch_output for ZIP (maintaining folder structure)
-                    zip_resume_path = batch_output_dir / safe_title / "resume.pdf"
+                    zip_resume_path = batch_output_dir / safe_title / resume_filename
                     zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
                     shutil.copy2(resume_pdf_path, zip_resume_path)
                     
@@ -561,7 +567,7 @@ async def tailor_resume_batch_endpoint(
                         "type": "resume",
                         "title": job_title,
                         "folder": safe_title,
-                        "filename": "resume.pdf",
+                        "filename": resume_filename,
                         "path": str(resume_pdf_path),
                         "zip_path": str(zip_resume_path)
                     })
@@ -767,15 +773,21 @@ async def tailor_resume_batch_google_sheets_endpoint(
                         # Tailor the resume
                         json_path, tailored_resume = tailor_resume(job_description, model, template_file)
                         
+                        # Extract name from tailored resume for filename
+                        person_name = tailored_resume.get('name', 'Resume') if isinstance(tailored_resume, dict) else 'Resume'
+                        # Sanitize name: remove spaces and special characters, keep only alphanumeric
+                        safe_name = "".join(c for c in person_name if c.isalnum())[:50] if person_name else "Resume"
+                        resume_filename = f"{safe_name}_resume.pdf"
+                        
                         # Generate files for this job
                         file_prefix = f"{safe_title}_{row_index}"
                         
                         # Generate resume PDF (always generate for batch)
-                        resume_pdf_path = job_folder / "resume.pdf"
+                        resume_pdf_path = job_folder / resume_filename
                         generate_pdf_from_json(tailored_resume, resume_pdf_path)
                         
                         # Also copy to batch_output for ZIP
-                        zip_resume_path = batch_output_dir / safe_title / "resume.pdf"
+                        zip_resume_path = batch_output_dir / safe_title / resume_filename
                         zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
                         shutil.copy2(resume_pdf_path, zip_resume_path)
                         
@@ -783,7 +795,7 @@ async def tailor_resume_batch_google_sheets_endpoint(
                             "type": "resume",
                             "title": job_title,
                             "folder": safe_title,
-                            "filename": "resume.pdf",
+                            "filename": resume_filename,
                             "path": str(resume_pdf_path),
                             "zip_path": str(zip_resume_path)
                         })
