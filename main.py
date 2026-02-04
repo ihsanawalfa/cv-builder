@@ -178,7 +178,6 @@ class TailoredResumeResponse(BaseModel):
 class GoogleSheetsBatchSubmission(BaseModel):
     google_sheets_links: List[str]
     template: str
-    cover_letter_only: bool = False
 
 # Authentication functions
 def load_users():
@@ -299,10 +298,19 @@ def fetch_google_sheet_content(sheet_url: str) -> List[dict]:
                 
                 # Skip empty rows
                 if title and description:
-                    rows.append({
+                    row_data = {
                         "Title": title,
                         "Description": description
-                    })
+                    }
+                    
+                    # Add question columns if they exist
+                    for key in normalized_row.keys():
+                        if key.lower().startswith('question') and key.lower() != 'question':
+                            q_value = normalized_row.get(key, '').strip()
+                            if q_value:
+                                row_data[key] = q_value
+                    
+                    rows.append(row_data)
         
         if not rows:
             raise ValueError("No valid rows found in Google Sheets. Make sure it has 'Title' and 'Description' columns with data.")
@@ -417,7 +425,6 @@ async def tailor_resume_endpoint(job_data: JobSubmission, current_user: dict = D
 async def tailor_resume_batch_endpoint(
     file: UploadFile = File(...),
     template: str = Form(...),
-    cover_letter_only: bool = Form(False),
     current_user: dict = Depends(get_current_user)
 ):
     """Generate multiple tailored resumes based on Excel file with Title and Description columns."""
@@ -485,6 +492,14 @@ async def tailor_resume_batch_endpoint(
                     detail=f"Excel file must contain columns: {', '.join(required_columns)}. Missing: {', '.join(missing_columns)}"
                 )
             
+            # Find question columns (Question1, Question2, Question3, Question4)
+            question_columns = []
+            for col in df.columns:
+                if col.strip().lower().startswith('question') and col.strip().lower() not in ['question']:
+                    question_columns.append(col)
+            # Sort question columns to maintain order
+            question_columns.sort(key=lambda x: int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 999)
+            
             # Extract template name
             template_name = os.path.splitext(os.path.basename(template))[0] if template else "default"
             template_file = f"resume_templates/{template}"
@@ -510,6 +525,13 @@ async def tailor_resume_batch_endpoint(
                     if not job_title or not job_description or job_title == 'nan' or job_description == 'nan':
                         continue
                     
+                    # Extract questions from question columns
+                    questions = []
+                    for q_col in question_columns:
+                        q_value = str(row.get(q_col, '')).strip()
+                        if q_value and q_value != 'nan' and q_value:
+                            questions.append(q_value)
+                    
                     # Sanitize job title for folder name (remove invalid characters)
                     safe_title = "".join(c for c in job_title if c.isalnum() or c in (' ', '-', '_', '.')).strip()
                     safe_title = safe_title.replace(' ', '_')
@@ -526,27 +548,25 @@ async def tailor_resume_batch_endpoint(
                     # Generate files for this job
                     file_prefix = f"{safe_title}_{index + 1}"
                     
-                    # Generate resume PDF if requested
-                    if not cover_letter_only:
-                        # Save resume in the job title folder
-                        resume_pdf_path = job_folder / "resume.pdf"
-                        generate_pdf_from_json(tailored_resume, resume_pdf_path)
-                        
-                        # Also copy to batch_output for ZIP (maintaining folder structure)
-                        zip_resume_path = batch_output_dir / safe_title / "resume.pdf"
-                        zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
-                        shutil.copy2(resume_pdf_path, zip_resume_path)
-                        
-                        generated_files.append({
-                            "type": "resume",
-                            "title": job_title,
-                            "folder": safe_title,
-                            "filename": "resume.pdf",
-                            "path": str(resume_pdf_path),
-                            "zip_path": str(zip_resume_path)
-                        })
+                    # Generate resume PDF (always generate for batch)
+                    resume_pdf_path = job_folder / "resume.pdf"
+                    generate_pdf_from_json(tailored_resume, resume_pdf_path)
                     
-                    # Generate cover letter
+                    # Also copy to batch_output for ZIP (maintaining folder structure)
+                    zip_resume_path = batch_output_dir / safe_title / "resume.pdf"
+                    zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
+                    shutil.copy2(resume_pdf_path, zip_resume_path)
+                    
+                    generated_files.append({
+                        "type": "resume",
+                        "title": job_title,
+                        "folder": safe_title,
+                        "filename": "resume.pdf",
+                        "path": str(resume_pdf_path),
+                        "zip_path": str(zip_resume_path)
+                    })
+                    
+                    # Generate cover letter (always generate for batch)
                     cover_letter_path = generate_cover_letter(tailored_resume, job_description, model, file_prefix)
                     if cover_letter_path and cover_letter_path.exists():
                         # Move cover letter to job title folder
@@ -574,6 +594,46 @@ async def tailor_resume_batch_endpoint(
                             "path": str(job_cover_letter_path),
                             "zip_path": str(zip_cover_letter_path)
                         })
+                    
+                    # Generate question answers PDF if questions exist
+                    if questions and len(questions) > 0:
+                        try:
+                            answers = generate_question_answers(questions, job_description, tailored_resume, model)
+                            
+                            # Create markdown content for questions PDF
+                            question_markdown = "# Question\n\n"
+                            for i, (question, answer) in enumerate(zip(questions, answers), 1):
+                                question_markdown += f"## Question {i}\n\n"
+                                question_markdown += f"{question}\n\n"
+                                question_markdown += f"### Answer\n\n"
+                                question_markdown += f"{answer}\n\n"
+                                question_markdown += "---\n\n"
+                            
+                            # Generate PDF from markdown
+                            question_pdf_path = job_folder / "question.pdf"
+                            generate_pdf_from_markdown(question_markdown, question_pdf_path)
+                            
+                            # Also copy to batch_output for ZIP
+                            zip_question_path = batch_output_dir / safe_title / "question.pdf"
+                            zip_question_path.parent.mkdir(exist_ok=True, parents=True)
+                            shutil.copy2(question_pdf_path, zip_question_path)
+                            
+                            generated_files.append({
+                                "type": "question",
+                                "title": job_title,
+                                "folder": safe_title,
+                                "filename": "question.pdf",
+                                "path": str(question_pdf_path),
+                                "zip_path": str(zip_question_path)
+                            })
+                        except Exception as e:
+                            # Log error but don't fail the whole row
+                            print(f"Error generating question PDF for {job_title}: {str(e)}")
+                            errors.append({
+                                "row": index + 1,
+                                "title": job_title,
+                                "error": f"Failed to generate question PDF: {str(e)}"
+                            })
                 
                 except Exception as e:
                     errors.append({
@@ -681,6 +741,20 @@ async def tailor_resume_batch_google_sheets_endpoint(
                         if not job_title or not job_description:
                             continue
                         
+                        # Extract questions from row data (find question columns)
+                        questions = []
+                        question_keys = []
+                        for key in row_data.keys():
+                            if key.lower().startswith('question') and key.lower() != 'question':
+                                question_keys.append(key)
+                        # Sort question columns by number
+                        question_keys.sort(key=lambda x: int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 999)
+                        # Extract question values in order
+                        for q_key in question_keys:
+                            q_value = str(row_data.get(q_key, '')).strip()
+                            if q_value and q_value != 'nan':
+                                questions.append(q_value)
+                        
                         # Sanitize job title for folder name
                         safe_title = "".join(c for c in job_title if c.isalnum() or c in (' ', '-', '_', '.')).strip()
                         safe_title = safe_title.replace(' ', '_')
@@ -696,26 +770,25 @@ async def tailor_resume_batch_google_sheets_endpoint(
                         # Generate files for this job
                         file_prefix = f"{safe_title}_{row_index}"
                         
-                        # Generate resume PDF if requested
-                        if not batch_data.cover_letter_only:
-                            resume_pdf_path = job_folder / "resume.pdf"
-                            generate_pdf_from_json(tailored_resume, resume_pdf_path)
-                            
-                            # Also copy to batch_output for ZIP
-                            zip_resume_path = batch_output_dir / safe_title / "resume.pdf"
-                            zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
-                            shutil.copy2(resume_pdf_path, zip_resume_path)
-                            
-                            generated_files.append({
-                                "type": "resume",
-                                "title": job_title,
-                                "folder": safe_title,
-                                "filename": "resume.pdf",
-                                "path": str(resume_pdf_path),
-                                "zip_path": str(zip_resume_path)
-                            })
+                        # Generate resume PDF (always generate for batch)
+                        resume_pdf_path = job_folder / "resume.pdf"
+                        generate_pdf_from_json(tailored_resume, resume_pdf_path)
                         
-                        # Generate cover letter
+                        # Also copy to batch_output for ZIP
+                        zip_resume_path = batch_output_dir / safe_title / "resume.pdf"
+                        zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
+                        shutil.copy2(resume_pdf_path, zip_resume_path)
+                        
+                        generated_files.append({
+                            "type": "resume",
+                            "title": job_title,
+                            "folder": safe_title,
+                            "filename": "resume.pdf",
+                            "path": str(resume_pdf_path),
+                            "zip_path": str(zip_resume_path)
+                        })
+                        
+                        # Generate cover letter (always generate for batch)
                         cover_letter_path = generate_cover_letter(tailored_resume, job_description, model, file_prefix)
                         if cover_letter_path and cover_letter_path.exists():
                             job_cover_letter_path = job_folder / "cover_letter.pdf"
@@ -742,6 +815,46 @@ async def tailor_resume_batch_google_sheets_endpoint(
                                 "path": str(job_cover_letter_path),
                                 "zip_path": str(zip_cover_letter_path)
                             })
+                        
+                        # Generate question answers PDF if questions exist
+                        if questions and len(questions) > 0:
+                            try:
+                                answers = generate_question_answers(questions, job_description, tailored_resume, model)
+                                
+                                # Create markdown content for questions PDF
+                                question_markdown = "# Question\n\n"
+                                for i, (question, answer) in enumerate(zip(questions, answers), 1):
+                                    question_markdown += f"## Question {i}\n\n"
+                                    question_markdown += f"{question}\n\n"
+                                    question_markdown += f"### Answer\n\n"
+                                    question_markdown += f"{answer}\n\n"
+                                    question_markdown += "---\n\n"
+                                
+                                # Generate PDF from markdown
+                                question_pdf_path = job_folder / "question.pdf"
+                                generate_pdf_from_markdown(question_markdown, question_pdf_path)
+                                
+                                # Also copy to batch_output for ZIP
+                                zip_question_path = batch_output_dir / safe_title / "question.pdf"
+                                zip_question_path.parent.mkdir(exist_ok=True, parents=True)
+                                shutil.copy2(question_pdf_path, zip_question_path)
+                                
+                                generated_files.append({
+                                    "type": "question",
+                                    "title": job_title,
+                                    "folder": safe_title,
+                                    "filename": "question.pdf",
+                                    "path": str(question_pdf_path),
+                                    "zip_path": str(zip_question_path)
+                                })
+                            except Exception as e:
+                                # Log error but don't fail the whole row
+                                print(f"Error generating question PDF for {job_title}: {str(e)}")
+                                errors.append({
+                                    "row": row_index,
+                                    "title": job_title,
+                                    "error": f"Failed to generate question PDF: {str(e)}"
+                                })
                     
                     except Exception as e:
                         errors.append({
