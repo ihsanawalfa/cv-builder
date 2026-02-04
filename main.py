@@ -21,6 +21,9 @@ import pandas as pd
 import zipfile
 import tempfile
 import shutil
+import re
+import requests
+from urllib.parse import urlparse, parse_qs
 try:
     import xlrd
     HAS_XLRD = True
@@ -172,6 +175,11 @@ class TailoredResumeResponse(BaseModel):
     json_path: Optional[str] = None
     text_path: Optional[str] = None
 
+class GoogleSheetsBatchSubmission(BaseModel):
+    google_sheets_links: List[str]
+    template: str
+    cover_letter_only: bool = False
+
 # Authentication functions
 def load_users():
     with open("users.json", "r") as f:
@@ -228,6 +236,83 @@ async def get_current_user(credentials: Optional[HTTPAuthorizationCredentials] =
     if user is None:
         raise credentials_exception
     return user
+
+def extract_google_sheet_id(url: str) -> Optional[str]:
+    """Extract spreadsheet ID from Google Sheets URL."""
+    # Handle various Google Sheets URL formats
+    patterns = [
+        r'/spreadsheets/d/([a-zA-Z0-9-_]+)',
+        r'id=([a-zA-Z0-9-_]+)',
+        r'/d/([a-zA-Z0-9-_]+)',
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
+
+def fetch_google_sheet_content(sheet_url: str) -> List[dict]:
+    """Fetch content from Google Sheets and return as list of rows with Title and Description."""
+    sheet_id = extract_google_sheet_id(sheet_url)
+    if not sheet_id:
+        raise ValueError("Invalid Google Sheets URL. Could not extract spreadsheet ID.")
+    
+    # Use CSV export URL (works for publicly shared sheets)
+    # Format: https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid={GID}
+    # If no gid specified, it exports the first sheet
+    export_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+    
+    try:
+        response = requests.get(export_url, timeout=10)
+        response.raise_for_status()
+        content = response.text
+        
+        # Parse CSV content
+        import io
+        import csv
+        
+        # Read CSV from string
+        csv_reader = csv.DictReader(io.StringIO(content))
+        
+        rows = []
+        for row in csv_reader:
+            # Normalize column names (case-insensitive)
+            normalized_row = {}
+            for key, value in row.items():
+                normalized_key = key.strip()
+                normalized_row[normalized_key] = value.strip() if value else ''
+            
+            # Check if Title and Description columns exist (case-insensitive)
+            title_key = None
+            desc_key = None
+            
+            for key in normalized_row.keys():
+                if key.lower() == 'title':
+                    title_key = key
+                elif key.lower() == 'description':
+                    desc_key = key
+            
+            if title_key and desc_key:
+                title = normalized_row[title_key]
+                description = normalized_row[desc_key]
+                
+                # Skip empty rows
+                if title and description:
+                    rows.append({
+                        "Title": title,
+                        "Description": description
+                    })
+        
+        if not rows:
+            raise ValueError("No valid rows found in Google Sheets. Make sure it has 'Title' and 'Description' columns with data.")
+        
+        return rows
+        
+    except requests.RequestException as e:
+        raise ValueError(f"Failed to fetch Google Sheets content: {str(e)}. Make sure the sheet is publicly shared (Anyone with the link can view).")
+    except Exception as e:
+        raise ValueError(f"Error parsing Google Sheets: {str(e)}")
 
 @app.get("/")
 async def read_root():
@@ -540,6 +625,180 @@ async def tailor_resume_batch_endpoint(
         print(f"Error in tailor_resume_batch_endpoint: {str(e)}")
         print(f"Full traceback: {error_details}")
         raise HTTPException(status_code=500, detail=f"Error processing batch: {str(e)}")
+
+@app.post("/tailor-resume-batch-google-sheets")
+async def tailor_resume_batch_google_sheets_endpoint(
+    batch_data: GoogleSheetsBatchSubmission,
+    current_user: dict = Depends(get_current_user)
+):
+    """Generate multiple tailored resumes based on Google Sheets links."""
+    # Check if user has access to the requested template
+    user_role = current_user.get("role", "user")
+    if user_role != "admin":
+        allowed_template = current_user.get("allowed_template")
+        if allowed_template and batch_data.template != allowed_template:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"You don't have permission to use template '{batch_data.template}'. You can only use '{allowed_template}'."
+            )
+    
+    if not batch_data.google_sheets_links or len(batch_data.google_sheets_links) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="At least one Google Sheets link is required"
+        )
+    
+    template_file = f"resume_templates/{batch_data.template}"
+    template_name = os.path.splitext(os.path.basename(batch_data.template))[0] if batch_data.template else "default"
+    
+    # Create built_resume directory structure
+    built_resume_dir = Path("built_resume")
+    built_resume_dir.mkdir(exist_ok=True)
+    
+    # Create temporary directory for batch outputs (for ZIP)
+    temp_dir = tempfile.mkdtemp()
+    batch_output_dir = Path(temp_dir) / "batch_output"
+    batch_output_dir.mkdir(exist_ok=True)
+    
+    generated_files = []
+    errors = []
+    row_index = 0
+    
+    try:
+        # Process each Google Sheets link
+        for sheet_index, sheet_url in enumerate(batch_data.google_sheets_links):
+            try:
+                # Fetch all rows from Google Sheets
+                sheet_rows = fetch_google_sheet_content(sheet_url)
+                
+                # Process each row from the sheet
+                for row_data in sheet_rows:
+                    try:
+                        row_index += 1
+                        job_title = row_data.get('Title', '').strip()
+                        job_description = row_data.get('Description', '').strip()
+                        
+                        if not job_title or not job_description:
+                            continue
+                        
+                        # Sanitize job title for folder name
+                        safe_title = "".join(c for c in job_title if c.isalnum() or c in (' ', '-', '_', '.')).strip()
+                        safe_title = safe_title.replace(' ', '_')
+                        safe_title = "".join(c for c in safe_title if c.isalnum() or c in ('_', '-', '.'))[:100]
+                        
+                        # Create folder for this job title in built_resume
+                        job_folder = built_resume_dir / safe_title
+                        job_folder.mkdir(exist_ok=True)
+                        
+                        # Tailor the resume
+                        json_path, tailored_resume = tailor_resume(job_description, model, template_file)
+                        
+                        # Generate files for this job
+                        file_prefix = f"{safe_title}_{row_index}"
+                        
+                        # Generate resume PDF if requested
+                        if not batch_data.cover_letter_only:
+                            resume_pdf_path = job_folder / "resume.pdf"
+                            generate_pdf_from_json(tailored_resume, resume_pdf_path)
+                            
+                            # Also copy to batch_output for ZIP
+                            zip_resume_path = batch_output_dir / safe_title / "resume.pdf"
+                            zip_resume_path.parent.mkdir(exist_ok=True, parents=True)
+                            shutil.copy2(resume_pdf_path, zip_resume_path)
+                            
+                            generated_files.append({
+                                "type": "resume",
+                                "title": job_title,
+                                "folder": safe_title,
+                                "filename": "resume.pdf",
+                                "path": str(resume_pdf_path),
+                                "zip_path": str(zip_resume_path)
+                            })
+                        
+                        # Generate cover letter
+                        cover_letter_path = generate_cover_letter(tailored_resume, job_description, model, file_prefix)
+                        if cover_letter_path and cover_letter_path.exists():
+                            job_cover_letter_path = job_folder / "cover_letter.pdf"
+                            if str(cover_letter_path) != str(job_cover_letter_path):
+                                shutil.move(str(cover_letter_path), str(job_cover_letter_path))
+                            
+                            # Also move the markdown file if it exists
+                            markdown_filename = cover_letter_path.name.replace('.pdf', '.md')
+                            original_markdown_path = OUTPUT_DIR / markdown_filename
+                            if original_markdown_path.exists():
+                                job_markdown_path = job_folder / "cover_letter.md"
+                                shutil.move(str(original_markdown_path), str(job_markdown_path))
+                            
+                            # Also copy to batch_output for ZIP
+                            zip_cover_letter_path = batch_output_dir / safe_title / "cover_letter.pdf"
+                            zip_cover_letter_path.parent.mkdir(exist_ok=True, parents=True)
+                            shutil.copy2(job_cover_letter_path, zip_cover_letter_path)
+                            
+                            generated_files.append({
+                                "type": "cover_letter",
+                                "title": job_title,
+                                "folder": safe_title,
+                                "filename": "cover_letter.pdf",
+                                "path": str(job_cover_letter_path),
+                                "zip_path": str(zip_cover_letter_path)
+                            })
+                    
+                    except Exception as e:
+                        errors.append({
+                            "row": row_index,
+                            "title": job_title if 'job_title' in locals() else "Unknown",
+                            "error": str(e)
+                        })
+                        continue
+            
+            except Exception as e:
+                errors.append({
+                    "row": sheet_index + 1,
+                    "title": sheet_url[:50] if sheet_url else "Unknown",
+                    "error": f"Failed to process Google Sheet: {str(e)}"
+                })
+                continue
+        
+        if not generated_files:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No valid rows found in Google Sheets or all rows failed to process"
+            )
+        
+        # Create zip file with folder structure
+        zip_filename = f"batch_resumes_googlesheets_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
+        zip_path = Path(temp_dir) / zip_filename
+        
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk(batch_output_dir):
+                for file in files:
+                    file_path = Path(root) / file
+                    arcname = file_path.relative_to(batch_output_dir)
+                    zipf.write(file_path, arcname)
+        
+        # Move zip to output directory for download
+        output_zip_path = OUTPUT_DIR / zip_filename
+        shutil.move(zip_path, output_zip_path)
+        
+        # Cleanup temp directory
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        
+        return {
+            "zip_url": f"/download/batch/{zip_filename}",
+            "files_count": len(generated_files),
+            "errors": errors if errors else None
+        }
+    
+    except HTTPException:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        raise
+    except Exception as e:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Error in tailor_resume_batch_google_sheets_endpoint: {str(e)}")
+        print(f"Full traceback: {error_details}")
+        raise HTTPException(status_code=500, detail=f"Error processing Google Sheets batch: {str(e)}")
 
 @app.get("/download/resume/{filename}")
 async def download_resume(filename: str, mode: Optional[str] = None):
