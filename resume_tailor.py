@@ -500,25 +500,22 @@ def convert_json_to_markdown(tailored_resume_json):
     # Combine experiences into the experiences section
     experiences_section = experiences_section_template.replace("{{experiences}}", experiences)
     
-    # Generate Skills Section - Removed per user request
-    # skills = tailored_resume["skills"]
-    # skills_html = ""
-    # if isinstance(skills, dict):
-    #     for category, skill_list in skills.items():
-    #         if isinstance(skill_list, list):
-    #             skills_text = ", ".join(skill_list)
-    #         else:
-    #             skills_text = str(skill_list)
-    #         
-    #         skill_item = skill_section_item_template
-    #         skill_item = skill_item.replace("{{category}}", category)
-    #         skill_item = skill_item.replace("{{skills}}", skills_text)
-    #         skills_html += skill_item + "\n"
-    # 
-    # skills_section = skills_section_template.replace("{{skills}}", skills_html)
+    # Generate Skills Section
+    skills = tailored_resume["skills"]
+    skills_html = ""
+    if isinstance(skills, dict):
+        for category, skill_list in skills.items():
+            if isinstance(skill_list, list):
+                skills_text = ", ".join(skill_list)
+            else:
+                skills_text = str(skill_list)
+            
+            skill_item = skill_section_item_template
+            skill_item = skill_item.replace("{{category}}", category)
+            skill_item = skill_item.replace("{{skills}}", skills_text)
+            skills_html += skill_item + "\n"
     
-    # Set skills section to empty string to remove it from PDF
-    skills_section = ""
+    skills_section = skills_section_template.replace("{{skills}}", skills_html)
     
     # Generate Education Section
     # For now, using the template directly since it has fixed values
