@@ -4,75 +4,71 @@
     "Email": "alvarobramastio@gmail.com",
     "WhatsApp": "+6283137370436"
   },
-    "summary": "Experienced Senior Frontend & Shopify developer with 6+ years, specializing in React.js, Next.js, Node.js, and Shopify integrations. Skilled at building scalable, high-performance web and eCommerce applications with clean architecture and reusable components. Adept at leading teams, mentoring juniors, and delivering seamless user experiences. Passionate about driving innovation in Web3 and modern web technologies.",
+  "summary": "Senior Shopify Developer (Shopify / Shopify Plus) with 6+ years building high-converting, high-performance eCommerce experiences. Specialized in Online Store 2.0 theme development (Liquid), custom sections, and modern headless storefronts with Hydrogen/React and Next.js. Strong track record integrating Shopify Admin + Storefront APIs (GraphQL), implementing checkout and cart UX, improving Core Web Vitals/SEO, and collaborating cross-functionally with design, marketing, and ops. Comfortable leading delivery, mentoring engineers, and owning production storefront reliability.",
   "references": [],
   "experience": [
     {
-      "title": "Full Stack Developer",
+      "title": "Senior Shopify Developer / Frontend Engineer",
       "company": "TechBubble",
       "period": "Oct 2024 - Oct 2025",
       "skills": [
-        "React.js",
-        "Next.js",
-        "Angular",
-        "Vue",
-        "TailwindCSS",
-        "Golang",
-        "Nest.js",
-        "Django",
-        "AWS",
         "Shopify",
         "Shopify Plus",
+        "Online Store 2.0",
         "Liquid",
-        "React",
-        "Next.js",
+        "Shopify CLI",
+        "Theme Architecture",
         "Hydrogen",
         "Oxygen",
+        "React",
+        "Next.js",
+        "TypeScript",
+        "GraphQL",
+        "Shopify Admin API",
+        "Shopify Storefront API",
         "HTML",
         "CSS",
         "JavaScript",
-        "jQuery",
-        "Bootstrap",
         "TailwindCSS",
         "Figma",
-        "InvisionApp",
-        "Zeplin",
-        "GCP",
-        "TDD",
-        "etc"
+        "SEO",
+        "Core Web Vitals"
       ],
-      "summary": "Focused on building high-performance, responsive, and component-driven web applications using Next.js for the frontend and Shopify for backend integrations. Emphasized clean architecture, reusable code, and smooth user experiences across devices.",
+      "summary": "Led Shopify Plus storefront development across theme and headless builds, focusing on conversion, performance, and maintainability. Owned key integrations and ensured high-quality releases through strong engineering practices and collaboration with stakeholders.",
       "highlights": [
-        "Developed Next.js applications with a strong focus on performance, SEO, and scalability.",
-        "Integrated Shopify backend APIs to manage products, carts, and checkout flows.",
-        "Built custom Shopify storefronts using React components and dynamic data fetching.",
-        "Implemented responsive, accessible UIs with optimized animations and transitions.",
-        "Worked with REST and GraphQL APIs for data handling and dynamic content.",
-        "Collaborated on design implementation, ensuring pixel-perfect and user-focused interfaces.",
-        "Managed version control and deployments using Git / GitHub and modern build tools."
+        "Built and maintained Online Store 2.0 themes using Liquid, JSON templates, sections, and metafields—enabling non-technical teams to ship content changes safely.",
+        "Delivered Shopify Plus enhancements (promotion logic, bundles, upsells, recommendations) and improved UX across PDP/PLP/cart, driving better conversion and AOV.",
+        "Integrated Shopify Admin + Storefront APIs (GraphQL) for product, collection, cart, and customer flows; implemented robust error handling and analytics instrumentation.",
+        "Optimized storefront performance and SEO (Core Web Vitals, image strategy, caching, critical CSS, code splitting) to improve speed and search visibility.",
+        "Implemented accessible, responsive UI components in React/Next.js and Hydrogen with a component-driven architecture and reusable design patterns.",
+        "Collaborated with design, marketing, and operations to deliver pixel-perfect experiences and reliable releases (Git-based workflows, CI/CD, release notes).",
+        "Mentored junior engineers via code reviews and pairing; raised quality bar around maintainability, testing strategy, and incident prevention."
       ]
     },
     {
-      "title": "Full Stack Developer",
+      "title": "Frontend Engineer (eCommerce)",
       "company": "PT.Arkamaya",
       "period": "Feb 2022 - Sep 2024",
       "skills": [
-        "React.js",
-        "Bootstrap",
+        "React",
+        "Next.js",
+        "TypeScript",
+        "TailwindCSS",
+        "JavaScript",
+        "HTML",
+        "CSS",
+        "RESTful APIs",
+        "GraphQL",
         "Webpack",
-        "InvisionApp",
-        "Balsamiq",
-        "CircleCI",
-        "Jenkins",
-        "AWS"
+        "CircleCI"
       ],
-      "summary": "Focused on building dynamic, component-driven web applications using Next.js and Node.js. Emphasized code reusability, UI performance, and responsive design, ensuring seamless experiences across devices.",
+      "summary": "Built scalable, component-driven frontends for commerce and content-heavy applications, emphasizing performance, accessibility, and a clean UI architecture.",
       "highlights": [
-        "Developed modern, server-rendered applications with Next.js, improving performance and SEO.",
-        "Built reusable components and optimized code structure for scalability.",
-        "Enhanced UI/UX through smooth animations, transitions, and accessibility best practices.",
-        "Integrated RESTful APIs and handled client-server data efficiently with Node.js.",
-        "Focused on responsive layouts, ensuring pixel-perfect and performant interfaces across devices."
+        "Developed server-rendered applications with Next.js; improved performance and SEO through route-level optimizations and rendering strategies.",
+        "Designed reusable UI components and patterns (forms, navigation, product listing layouts) to speed delivery and improve consistency.",
+        "Implemented accessibility best practices (semantic HTML, keyboard navigation, ARIA) and improved responsive behavior across devices.",
+        "Integrated REST/GraphQL APIs and established front-end data handling patterns (caching, pagination, optimistic UI).",
+        "Partnered with design teams to deliver pixel-perfect UI with strong attention to performance, maintainability, and cross-browser behavior."
       ]
     },
     {
@@ -86,119 +82,70 @@
         "Implemented pixel-perfect designs and optimized pages for speed and accessibility.",
         "Wrote semantic, maintainable code with a focus on best practices and reusability.",
         "Partnered closely with design and backend teams to bring mockups and business logic to life through functional, elegant interfaces.",
-        "Built enterprise-grade applications with React and TypeScript, leveraging RxJS for reactive data flows and lazy loading for performance.",
-        "Created modular, reusable components and implemented route guards to enhance both maintainability and security.",
+        "Built applications with React and TypeScript, leveraging lazy loading and performance patterns for faster UX.",
+        "Created modular, reusable components and established routing/guard patterns to enhance maintainability and security.",
         "Worked in Agile teams, contributing to code reviews, architecture planning, and continuous improvement."
       ]
-    }   
+    }
   ],
   "skills": {
-    "Frontend Development": [
-      "React",
-      "redux",
-      "redux-thunk",
-      "Next.js",
-      "Angular",
-      "Vue",
-      "JavaScript",
-      "TypeScript",
-      "CSS",
-      "HTML",
-      "Bootstrap",
-      "TailwindCSS",
-      "Figma",
-      "InvisionApp",
-      "Zeplin"
+    "Shopify & eCommerce": [
+      "Shopify",
+      "Shopify Plus",
+      "Online Store 2.0",
+      "Liquid",
+      "Theme Architecture (sections, blocks, JSON templates)",
+      "Metafields & Metaobjects",
+      "Shopify Admin API (GraphQL)",
+      "Shopify Storefront API (GraphQL)",
+      "Hydrogen (Remix)",
+      "Oxygen",
+      "Checkout & Cart UX",
+      "Checkout Extensibility (UI extensions)",
+      "Shopify Functions (discounts)",
+      "Shopify Flow",
+      "Storefront Performance & CRO",
+      "SEO (structured data, sitemaps, metadata)"
     ],
-    "Backend Development": [
+    "Frontend": [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "TailwindCSS",
+      "Accessibility (WCAG)",
+      "Component-driven UI architecture",
+      "Performance optimization (Core Web Vitals)"
+    ],
+    "Integrations & Backend (for Shopify)": [
       "Node.js",
-      "NestJS",
       "Express",
-      "Python",
-      "Django",
-      "Flask",
-      "FastAPI",
       "RESTful APIs",
       "GraphQL",
-      "Redis",
-      "RabbitMQ",
-      "TypeORM"
+      "Webhooks",
+      "Auth & OAuth (app integrations)",
+      "Redis (caching)"
     ],
-    "Shopify Development": [
-      "Shopify",
-      "Shopify Plus",
-      "Liquid",
-      "Hydrogen",
-      "Oxygen"
-    ],
-    "eCommerce Development": [
-      "Shopify",
-      "Shopify Plus",
-      "Liquid",
-      "Hydrogen",
-      "Oxygen"
-    ],
-    "Web3 Technologies": [
-      "Solidity",
-      "Web3.js",
-      "Ethers.js",
-      "Smart Contracts"
-    ],
-    "Blockchain Platforms": [
-      "Ethereum",
-      "Polygon",
-      "Solana",
-      "Binance Smart Chain"
-    ],
-    "Decentralized Finance (DeFi)": [
-      "DApps",
-      "Decentralized Exchanges (DEX)",
-      "Centralized Exchanges (CEX)",
-      "NFT Marketplaces"
-    ],
-    "Database Management": [
-      "MongoDB",
-      "PostgreSQL",
-      "MySQL",
-      "MSSQL"
-    ],
-    "Smart Contract Development": [
-      "Solidity",
-      "Hardhat",
-      "Truffle",
-      "OpenZeppelin"
-    ],
-    "Testing and Debugging": [
-      "Karma",
+    "Testing": [
       "Jest",
-      "Selenium",
-      "Cypress",
-      "Pytest"
+      "Cypress"
     ],
-    "Version Controlling System": [
-      "Git",
-      "Github",
-      "Gitlab",
-      "BitBucket"
-    ],
-    "Tools and DevOps": [
-      "Docker",
+    "DevOps & Tooling": [
+      "Shopify CLI",
       "Git",
       "GitHub Actions",
       "CircleCI",
+      "Vercel",
       "AWS",
-      "IPFS",
-      "Heroku",
-      "Vercel"
+      "Docker"
     ],
-    "Project Management": [
+    "Collaboration": [
       "Agile Methodology",
       "Jira",
-      "Confluence"
-    ],
-    "Data Visualization": [
-      "D3.js",
-      "Chart.js"
+      "Confluence",
+      "Figma"
     ]
   },
   "education": {
