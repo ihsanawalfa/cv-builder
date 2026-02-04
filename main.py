@@ -105,6 +105,33 @@ model = OpenAIModelWrapper(client)
 OUTPUT_DIR = Path("output")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
+# Helper function to normalize template name (case-insensitive file matching)
+def normalize_template_name(template_name: str) -> str:
+    """
+    Normalize template name by finding the actual file in the filesystem (case-insensitive).
+    Returns the actual filename as it exists in the filesystem.
+    """
+    if not template_name:
+        return template_name
+    
+    template_dir = Path("resume_templates")
+    if not template_dir.exists():
+        return template_name
+    
+    # Try exact match first
+    exact_path = template_dir / template_name
+    if exact_path.exists():
+        return template_name
+    
+    # Try case-insensitive match
+    template_name_lower = template_name.lower()
+    for file in template_dir.iterdir():
+        if file.is_file() and file.name.lower() == template_name_lower:
+            return file.name
+    
+    # If not found, return original (will cause error later, but preserves original behavior)
+    return template_name
+
 # Initialize FastAPI app
 app = FastAPI(
     title="Resumer API",
@@ -370,7 +397,7 @@ async def tailor_resume_endpoint(job_data: JobSubmission, current_user: dict = D
         user_role = current_user.get("role", "user")
         if user_role != "admin":
             allowed_template = current_user.get("allowed_template")
-            if allowed_template and job_data.template != allowed_template:
+            if allowed_template and job_data.template.lower() != allowed_template.lower():
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail=f"You don't have permission to use template '{job_data.template}'. You can only use '{allowed_template}'."
@@ -378,14 +405,15 @@ async def tailor_resume_endpoint(job_data: JobSubmission, current_user: dict = D
         
         cover_letter_only = job_data.cover_letter_only
 
-        # Tailor the resume based on the job description
-        template_file = f"resume_templates/{job_data.template}"
+        # Normalize template name to match filesystem (case-insensitive)
+        template_name_normalized = normalize_template_name(job_data.template)
+        template_file = f"resume_templates/{template_name_normalized}"
         json_path, tailored_resume = tailor_resume(job_data.job_description, model, template_file)
 
         # Convert JSON to text format
         text_path, _ = convert_json_to_text(tailored_resume)
-        # Extract template name from the file path for the output filename
-        template_name = os.path.splitext(os.path.basename(job_data.template))[0] if job_data.template else "default"
+        # Extract template name from the normalized file path for the output filename
+        template_name = os.path.splitext(os.path.basename(template_name_normalized))[0] if template_name_normalized else "default"
 
         response: dict = {}
 
@@ -432,7 +460,7 @@ async def tailor_resume_batch_endpoint(
     user_role = current_user.get("role", "user")
     if user_role != "admin":
         allowed_template = current_user.get("allowed_template")
-        if allowed_template and template != allowed_template:
+        if allowed_template and template.lower() != allowed_template.lower():
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"You don't have permission to use template '{template}'. You can only use '{allowed_template}'."
@@ -500,9 +528,10 @@ async def tailor_resume_batch_endpoint(
             # Sort question columns to maintain order
             question_columns.sort(key=lambda x: int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 999)
             
-            # Extract template name
-            template_name = os.path.splitext(os.path.basename(template))[0] if template else "default"
-            template_file = f"resume_templates/{template}"
+            # Normalize template name to match filesystem (case-insensitive)
+            template_name_normalized = normalize_template_name(template)
+            template_name = os.path.splitext(os.path.basename(template_name_normalized))[0] if template_name_normalized else "default"
+            template_file = f"resume_templates/{template_name_normalized}"
             
             # Create built_resume directory structure
             built_resume_dir = Path("built_resume")
@@ -702,7 +731,7 @@ async def tailor_resume_batch_google_sheets_endpoint(
     user_role = current_user.get("role", "user")
     if user_role != "admin":
         allowed_template = current_user.get("allowed_template")
-        if allowed_template and batch_data.template != allowed_template:
+        if allowed_template and batch_data.template.lower() != allowed_template.lower():
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"You don't have permission to use template '{batch_data.template}'. You can only use '{allowed_template}'."
@@ -714,8 +743,10 @@ async def tailor_resume_batch_google_sheets_endpoint(
             detail="At least one Google Sheets link is required"
         )
     
-    template_file = f"resume_templates/{batch_data.template}"
-    template_name = os.path.splitext(os.path.basename(batch_data.template))[0] if batch_data.template else "default"
+    # Normalize template name to match filesystem (case-insensitive)
+    template_name_normalized = normalize_template_name(batch_data.template)
+    template_file = f"resume_templates/{template_name_normalized}"
+    template_name = os.path.splitext(os.path.basename(template_name_normalized))[0] if template_name_normalized else "default"
     
     # Create built_resume directory structure
     built_resume_dir = Path("built_resume")
@@ -998,11 +1029,15 @@ async def get_templates(current_user: dict = Depends(get_current_user)):
     else:
         # Regular users can only see their allowed template
         allowed_template = current_user.get("allowed_template")
-        if allowed_template and allowed_template in all_templates:
-            return [allowed_template]
-        else:
-            # If no allowed_template is set, return empty list
-            return []
+        if allowed_template:
+            # Normalize the allowed template name to match filesystem
+            normalized_allowed = normalize_template_name(allowed_template)
+            # Check if normalized template exists in the list (case-insensitive)
+            for template in all_templates:
+                if template.lower() == normalized_allowed.lower():
+                    return [template]
+        # If no allowed_template is set or not found, return empty list
+        return []
 
 @app.get("/cover_letter/content/{filename}")
 async def get_cover_letter_content(filename: str, current_user: dict = Depends(get_current_user)):
