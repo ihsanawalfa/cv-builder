@@ -5,70 +5,104 @@
     "Phone": "+6285111025693",
     "LinkedIn": "www.linkedin.com/in/ihsan-faridi-4367b13a3"
   },
-  "summary": "Full Stack Developer specializing in AI-Powered & Frontend-First Applications | Turning Ideas into Scalable Products. Experienced in building modern web applications using React.js, Next.js, Node.js, Python, and AI technologies. Passionate about creating scalable solutions and mentoring developers.",
+  "summary": "Senior Full Stack Developer specializing in AI-Powered & Frontend-First Applications | Turning Ideas into Scalable Products. 7+ years of experience building modern web applications using React.js, Next.js, Node.js, Python, and AI technologies. Proven track record of leading development teams, architecting scalable solutions, and delivering high-quality products. Passionate about mentoring developers and driving technical excellence.",
   "references": [],
   "experience": [
     {
       "title": "Full-stack Developer",
-      "company": "Attekus",
-      "period": "Aug 2022 - Present",
+      "company": "NybleCraft",
+      "companyDescription": "We build products.",
+      "period": "August 2022 - Present",
+      "location": "Sydney, New South Wales, Australia",
+      "workArrangement": "Remote",
+      "duration": "3 years 7 months",
       "skills": [
         "Artificial Intelligence (AI)",
         "Next.js",
         "Node.js",
+        "TypeScript",
+        "Python (Programming Language)",
+        "React.js",
         "GitHub",
         "Cursor AI",
         "ChatGPT",
-        "TypeScript",
-        "Python (Programming Language)"
+        "FastAPI",
+        "RESTful APIs",
+        "PostgreSQL",
+        "MongoDB",
+        "Docker",
+        "AWS",
+        "Vercel",
+        "Git",
+        "TailwindCSS",
+        "GraphQL"
       ],
-      "summary": "Developed full-stack applications with AI integration, focusing on frontend-first architecture and scalable solutions. Worked remotely from Brisbane, Australia, leveraging modern technologies to build innovative products.",
+      "summary": "Leading full-stack development initiatives at NybleCraft, specializing in AI-powered applications and frontend-first architecture. Architecting and delivering scalable products that drive business value. Working remotely from Sydney, Australia, collaborating with international teams to build innovative solutions.",
       "highlights": [
-        "Built AI-powered applications using Next.js and TypeScript for frontend development",
-        "Developed backend services with Node.js and Python for scalable architecture",
-        "Integrated AI technologies including ChatGPT and Cursor AI into applications",
-        "Managed version control and collaboration using GitHub",
-        "Worked remotely, delivering high-quality solutions across time zones"
+        "Architected and developed AI-powered full-stack applications using Next.js, TypeScript, and Node.js",
+        "Designed and implemented scalable backend services with Python, FastAPI, and microservices architecture",
+        "Integrated cutting-edge AI technologies (ChatGPT, Cursor AI) to enhance application capabilities and developer productivity",
+        "Led technical decision-making for frontend architecture, ensuring optimal performance and user experience",
+        "Mentored junior developers and conducted code reviews to maintain high code quality standards",
+        "Collaborated with cross-functional teams to deliver products on time and within scope",
+        "Managed version control workflows and CI/CD pipelines using GitHub Actions",
+        "Optimized application performance and scalability, handling high-traffic scenarios"
       ]
     },
     {
       "title": "Full Stack Developer",
       "company": "PT EWINDO",
-      "period": "May 2020 - Jun 2022",
+      "period": "May 2020 - June 2022",
+      "location": "Bandung, West Java, Indonesia",
+      "workArrangement": "On-site",
+      "duration": "2 years 2 months",
       "skills": [
         "React.js",
         "Next.js",
         "Python (Programming Language)",
         "Artificial Intelligence (AI)",
         "FastAPI",
-        "Node.js"
+        "Node.js",
+        "TypeScript",
+        "RESTful APIs",
+        "PostgreSQL",
+        "Docker",
+        "Git",
+        "GitHub",
+        "TailwindCSS"
       ],
-      "summary": "Led web development projects as a self-employed senior developer, specializing in React.js, Next.js, and Python-based backend solutions. Built AI-integrated applications using FastAPI and modern frontend frameworks.",
+      "summary": "Led full-stack development projects as a senior developer, specializing in React.js, Next.js, and Python-based backend solutions. Architected and delivered AI-integrated applications using FastAPI and modern frontend frameworks, driving technical excellence and innovation.",
       "highlights": [
-        "Developed modern web applications using React.js and Next.js",
-        "Built RESTful APIs and backend services using Python and FastAPI",
-        "Integrated AI capabilities into web applications",
-        "Architected scalable full-stack solutions",
-        "Managed end-to-end development lifecycle independently"
+        "Architected and developed modern web applications using React.js and Next.js with TypeScript",
+        "Designed and built scalable RESTful APIs and backend services using Python and FastAPI",
+        "Integrated AI capabilities into web applications, enhancing user experience and functionality",
+        "Led technical architecture decisions for scalable full-stack solutions",
+        "Managed end-to-end development lifecycle, from requirements gathering to deployment",
+        "Collaborated with stakeholders to translate business requirements into technical solutions",
+        "Optimized application performance and implemented best practices for code maintainability"
       ]
     },
     {
       "title": "Web Developer",
       "company": "Salam Ganesha Academy",
-      "period": "Jul 2017 - Mar 2020",
+      "period": "July 2017 - March 2020",
+      "location": "Jakarta, Indonesia",
+      "workArrangement": "On-site",
+      "duration": "2 years 9 months",
       "skills": [
         "HTML",
         "Cascading Style Sheets (CSS)",
         "JavaScript",
         "React.js"
       ],
-      "summary": "Mentored students in web development fundamentals, teaching HTML, CSS, JavaScript, and React.js. Provided one-on-one guidance on industry-standard tools and best practices, fostering strong foundations in web design and development.",
+      "summary": "Served as Web Developer Fundamental Mentor, teaching and mentoring students in web development fundamentals including HTML, CSS, JavaScript, and React.js. Provided comprehensive one-on-one guidance on industry-standard tools and best practices, building strong foundations for future developers.",
       "highlights": [
-        "Conducted one-on-one mentoring sessions teaching HTML, CSS, JavaScript, and React.js",
-        "Provided guidance on industry-standard tools including GitHub, Visual Studio Code, Figma, and Firebase hosting",
-        "Fostered strong foundation in web design, emphasizing best practices",
-        "Inspired creativity and problem-solving skills in students",
-        "Developed comprehensive curriculum and learning materials"
+        "Conducted one-on-one mentoring sessions teaching HTML, CSS, JavaScript, and React.js fundamentals",
+        "Provided expert guidance on industry-standard tools including GitHub, Visual Studio Code, Figma, and Firebase hosting",
+        "Developed and delivered comprehensive curriculum and learning materials for web development",
+        "Fostered strong foundation in web design principles, emphasizing best practices and modern techniques",
+        "Inspired creativity and problem-solving skills in students through hands-on projects",
+        "Mentored students from beginner to intermediate level, preparing them for professional development roles"
       ]
     }
   ],
