@@ -77,9 +77,13 @@ class ClaudeModelWrapper:
         self.openai_client = openai_client
         self.claude_model = "claude-3-5-sonnet-20241022"  # Default Claude model
         self.openai_model = "gpt-4o-mini"  # Default OpenAI model
+        self.credit_exhausted = False  # Track if Claude credits are exhausted
     
     def generate_content(self, prompt):
         """Mimics Gemini's generate_content method with Claude primary, OpenAI fallback"""
+        # Reset credit_exhausted flag at the start of each request
+        self.credit_exhausted = False
+        
         # Try Claude first if available
         if self.claude_client:
             try:
@@ -110,10 +114,26 @@ class ClaudeModelWrapper:
                     
             except Exception as e:
                 error_msg = str(e)
+                error_type = type(e).__name__
+                
                 # Check if it's a credit/balance error - fallback to OpenAI
-                if "credit balance" in error_msg.lower() or "too low" in error_msg.lower():
+                # Check for various credit-related error patterns
+                credit_error_keywords = [
+                    "credit balance", "too low", "insufficient", "payment", 
+                    "payment required", "billing", "account", "quota", 
+                    "limit exceeded", "402", "payment_method"
+                ]
+                is_credit_error = any(keyword in error_msg.lower() for keyword in credit_error_keywords)
+                
+                # Also check for HTTP status codes that might indicate payment issues
+                if hasattr(e, 'status_code'):
+                    if e.status_code == 402:  # Payment Required
+                        is_credit_error = True
+                
+                if is_credit_error:
                     print(f"Claude API Error (insufficient credits): {error_msg}")
                     print("Falling back to OpenAI...")
+                    self.credit_exhausted = True  # Mark that credits are exhausted
                     if self.openai_client:
                         return self._use_openai(prompt)
                     else:
@@ -386,6 +406,7 @@ class TailoredResumeResponse(BaseModel):
     answers: Optional[List[str]] = None
     json_path: Optional[str] = None
     text_path: Optional[str] = None
+    notification: Optional[str] = None
 
 class GoogleSheetsBatchSubmission(BaseModel):
     google_sheets_links: List[str]
@@ -538,6 +559,18 @@ def fetch_google_sheet_content(sheet_url: str) -> List[dict]:
 async def read_root():
     return {"message": "Resumer API is running"}
 
+@app.get("/api-status")
+async def get_api_status(current_user: dict = Depends(get_current_user)):
+    """Get the current status of available AI APIs"""
+    status_info = {
+        "claude_available": claude_client is not None,
+        "openai_available": openai_client is not None,
+        "claude_credit_exhausted": model.credit_exhausted if hasattr(model, 'credit_exhausted') else False,
+        "primary_api": "claude" if claude_client and not (model.credit_exhausted if hasattr(model, 'credit_exhausted') else False) else "openai" if openai_client else "none",
+        "fallback_available": openai_client is not None if claude_client else False
+    }
+    return status_info
+
 @app.options("/signin")
 async def signin_options(request: Request):
     """Handle OPTIONS preflight requests for /signin"""
@@ -625,6 +658,10 @@ async def tailor_resume_endpoint(job_data: JobSubmission, current_user: dict = D
         if job_data.return_json:
             response["json_path"] = str(json_path)
             response["text_path"] = str(text_path)
+        
+        # Check if Claude credits were exhausted and add notification
+        if model.credit_exhausted:
+            response["notification"] = "Your Claude AI credits have been used up. To ensure uninterrupted service, we've automatically switched to OpenAI for this request. You can continue generating resumes without any action required."
         
         return response
     except Exception as e:
@@ -809,11 +846,17 @@ async def tailor_resume_batch_endpoint(
             # Cleanup temp directory
             shutil.rmtree(temp_dir, ignore_errors=True)
             
-            return {
+            response = {
                 "zip_url": f"/download/batch/{zip_filename}",
                 "files_count": len(generated_files),
                 "errors": errors if errors else None
             }
+            
+            # Check if Claude credits were exhausted and add notification
+            if model.credit_exhausted:
+                response["notification"] = "Your Claude AI credits have been used up. To ensure uninterrupted service, we've automatically switched to OpenAI for this request. You can continue generating resumes without any action required."
+            
+            return response
         
     except HTTPException:
         shutil.rmtree(temp_dir, ignore_errors=True)
