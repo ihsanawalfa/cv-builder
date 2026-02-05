@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import os
 import uuid
+from anthropic import Anthropic
 from openai import OpenAI
 from dotenv import load_dotenv
 from pathlib import Path
@@ -50,39 +51,103 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # JWT Security - auto_error=False allows OPTIONS requests to pass through
 security = HTTPBearer(auto_error=False)
 
-# Configure OpenAI
+# Configure Anthropic Claude with OpenAI fallback
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY environment variable not set")
 
-# Strip any whitespace/newlines from the API key
-OPENAI_API_KEY = OPENAI_API_KEY.strip()
+# Initialize both clients if keys are available
+claude_client = None
+openai_client = None
 
-client = OpenAI(api_key=OPENAI_API_KEY)
+if ANTHROPIC_API_KEY:
+    ANTHROPIC_API_KEY = ANTHROPIC_API_KEY.strip()
+    claude_client = Anthropic(api_key=ANTHROPIC_API_KEY)
+
+if OPENAI_API_KEY:
+    OPENAI_API_KEY = OPENAI_API_KEY.strip()
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+if not claude_client and not openai_client:
+    raise ValueError("At least one of ANTHROPIC_API_KEY or OPENAI_API_KEY must be set")
 
 # Create a model-like object that mimics Gemini's interface for compatibility
-class OpenAIModelWrapper:
-    def __init__(self, client):
-        self.client = client
-        self.model = "gpt-4o-mini"  # Default OpenAI model; can be changed to gpt-4, gpt-3.5-turbo, etc.
+class ClaudeModelWrapper:
+    def __init__(self, claude_client=None, openai_client=None):
+        self.claude_client = claude_client
+        self.openai_client = openai_client
+        self.claude_model = "claude-3-5-sonnet-20241022"  # Default Claude model
+        self.openai_model = "gpt-4o-mini"  # Default OpenAI model
     
     def generate_content(self, prompt):
-        """Mimics Gemini's generate_content method for compatibility"""
+        """Mimics Gemini's generate_content method with Claude primary, OpenAI fallback"""
+        # Try Claude first if available
+        if self.claude_client:
+            try:
+                response = self.claude_client.messages.create(
+                    model=self.claude_model,
+                    max_tokens=4096,
+                    temperature=0.7,
+                    messages=[
+                        {"role": "user", "content": prompt}
+                    ]
+                )
+                
+                # Create a response object that mimics Gemini's response
+                class Response:
+                    def __init__(self, text):
+                        self.text = text
+                
+                # Check if response has content
+                if response.content and len(response.content) > 0:
+                    # Claude returns content as a list of text blocks
+                    content = response.content[0].text if hasattr(response.content[0], 'text') else str(response.content[0])
+                    if content:
+                        return Response(content)
+                    else:
+                        raise Exception("Claude API returned empty content")
+                else:
+                    raise Exception("Claude API returned no content")
+                    
+            except Exception as e:
+                error_msg = str(e)
+                # Check if it's a credit/balance error - fallback to OpenAI
+                if "credit balance" in error_msg.lower() or "too low" in error_msg.lower():
+                    print(f"Claude API Error (insufficient credits): {error_msg}")
+                    print("Falling back to OpenAI...")
+                    if self.openai_client:
+                        return self._use_openai(prompt)
+                    else:
+                        raise Exception(f"Claude API error (insufficient credits) and no OpenAI fallback available: {error_msg}")
+                else:
+                    # For other errors, try OpenAI fallback if available
+                    print(f"Claude API Error: {error_msg}")
+                    if self.openai_client:
+                        print("Falling back to OpenAI...")
+                        return self._use_openai(prompt)
+                    else:
+                        raise Exception(f"Claude API error: {error_msg}")
+        
+        # If no Claude client, use OpenAI
+        if self.openai_client:
+            return self._use_openai(prompt)
+        
+        raise Exception("No API client available")
+    
+    def _use_openai(self, prompt):
+        """Internal method to use OpenAI API"""
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
+            response = self.openai_client.chat.completions.create(
+                model=self.openai_model,
                 messages=[
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7
             )
             
-            # Create a response object that mimics Gemini's response
             class Response:
                 def __init__(self, text):
                     self.text = text
             
-            # Check if response has content
             if response.choices and len(response.choices) > 0:
                 content = response.choices[0].message.content
                 if content:
@@ -91,23 +156,21 @@ class OpenAIModelWrapper:
                     raise Exception("OpenAI API returned empty content")
             else:
                 raise Exception("OpenAI API returned no choices")
-                
         except Exception as e:
-            # Log the error for debugging
             import traceback
             error_details = traceback.format_exc()
             print(f"OpenAI API Error: {str(e)}")
             print(f"Error details: {error_details}")
             raise Exception(f"OpenAI API error: {str(e)}")
 
-model = OpenAIModelWrapper(client)
+model = ClaudeModelWrapper(claude_client=claude_client, openai_client=openai_client)
 
 # Create output directory for intermediate files
 OUTPUT_DIR = Path("output")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Batch concurrency (controls how many rows are processed in parallel)
-# Note: higher values can trigger OpenAI rate limits or high CPU usage during PDF generation.
+# Note: higher values can trigger Claude API rate limits or high CPU usage during PDF generation.
 BATCH_MAX_CONCURRENCY = int(os.getenv("BATCH_MAX_CONCURRENCY", "3"))
 
 # Helper function to normalize template name (case-insensitive file matching)
@@ -162,7 +225,7 @@ def _process_one_batch_job(
         job_folder = built_resume_dir / safe_title
         job_folder.mkdir(exist_ok=True)
 
-        # Tailor the resume (OpenAI call)
+        # Tailor the resume (Claude API call)
         _, tailored_resume = tailor_resume(job_description, model, template_file)
 
         # Resume filename based on person's name in template JSON

@@ -55,7 +55,7 @@ def extract_job_link_content(url: str) -> str:
 
 def analyze_job_description(job_description: str, model) -> Dict[str, Any]:
     """
-    Analyze a job description using OpenAI.
+    Analyze a job description using Claude API.
     Returns structured data about the job requirements, skills, etc.
     """
     analysis_prompt = f"""
