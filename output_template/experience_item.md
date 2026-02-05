@@ -1,4 +1,4 @@
-<div class="experience-entry" style="margin: 0;">
+<div class="experience-entry" style="margin: 0 0 1em 0;">
   <div style="width: 100%; border-collapse: collapse; margin-bottom: 0.5em;">
     <!-- <div style="display:flex">
       <h3 style="color: #0A3662; font-size: 9pt; font-weight: bold; padding: 0; vertical-align: baseline;">
