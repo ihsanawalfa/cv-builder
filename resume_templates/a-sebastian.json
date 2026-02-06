@@ -1,0 +1,173 @@
+{
+  "name": "Sebastian Liu",
+  "contact": {
+    "location": "Tampines, Singapore",
+    "GitHub": "https://github.com/funnywebdev",
+    "Email": "mailto:stliu.work@gmail.com"
+  },
+  "summary": "Senior Front End Engineer who thrives in building startups from the ground up, no matter the industry. I’ve led the development of sleek, high-performing web apps that scale, working remotely with global teams to deliver exceptional user experiences. Passionate about turning ideas into polished, responsive interfaces that drive growth.",
+  "references":[
+  ],
+  "experience": [
+    {
+      "title": "Senior Front End Engineer",
+      "company": "True Prodigy",
+      "period": "Sep 2017 to Jan 2025",
+      "skills": [
+        "React.js",
+        "Material UI",
+        "Tailwind CSS",
+        "Storybook",
+        "Figma",
+        "Jest",
+        "AWS",
+        "Cypress",
+        "CI/CD",
+        "etc"
+      ],
+      "summary": "I have worked on several projects in various roles, including frontend, backend, DevOps, or a combination of these. I have also contributed to improving development processes and technology across the company.",
+      "highlights": [
+        "Led development of a high-performance web application, achieving 97% PageSpeed score through NextJS optimization, SEO improvements, and AWS infrastructure setup (Route53, CloudFront, EC2, ELB, RDS)",
+        "Architected and deployed a microservices backend using NestJS and MongoDB, implementing API documentation with Swagger and CI/CD pipelines using GitHub Actions",
+        "Built a DEX platform with React and Web3.js, integrating smart contracts for token swaps and liquidity provision with 99.9% uptime",
+        "Developed a DAO platform using React and FastAPI, implementing proposal management and voting mechanisms with Web3.js integration",
+        "Created a real-time trading dashboard with WebSocket integration, achieving sub-second data updates and handling 100K+ concurrent users",
+        "Mentored junior developers, conducted code reviews, and established development standards that reduced bug reports by 40%",
+        "Optimized database queries and implemented caching strategies, reducing API response times by 60%",
+        "Designed and implemented secure authentication system using JWT and OAuth2, ensuring GDPR compliance",
+        "Set up comprehensive monitoring using ELK stack and Grafana, reducing incident response time by 50%"
+        ]
+    },
+    {
+      "title": "Full Stack Developer",
+      "company": "Spott AI",
+      "period": "Sep 2015 to Aug 2017",
+      "skills": [
+        "React.js",
+        "Bootstrap",
+        "Webpack",
+        "InvisionApp",
+        "Balsamiq",
+        "CircleCI",
+        "Jenkins",
+        "AWS"
+      ],
+      "summary": "Built and maintained an AI-driven platform that supports business decision-making. Worked mainly on the frontend side with Angular, NgRx and rxjs. Built a microservice using NestJS on the backend side with RabbitMQ for messaging. Mentored junior guys to let them grow in a collaborative team environment.",
+      "highlights": [
+        "Developed a real-time AI-powered task prioritization system using Angular and RxJS, improving team productivity by 30%",
+        "Implemented WebSocket integration for live updates and notifications, handling 50K concurrent users",
+        "Built reusable UI components library with NgRx state management, reducing development time by 40%",
+        "Set up automated testing pipeline with Jest and Cypress, achieving 85% test coverage"
+      ]
+    },
+    {
+      "title": "Frontend Developer",
+      "company": "Sunnova",
+      "period": "July 2014 to Aug 2015",
+      "skills": [],
+      "summary": "Built and maintained a health insurance platform from the ground up. Used Laravel, Blade, jQuery, Bootstrap, MongoDB, RESTful API, Nginx, AWS.",
+      "highlights": []
+    }
+  ],
+  "skills": {
+    "Frontend Development": [
+      "React",
+      "redux",
+      "redux-thunk",
+      "Next.js",
+      "Angular",
+      "Vue",
+      "JavaScript",
+      "TypeScript",
+      "CSS",
+      "HTML",
+      "Bootstrap",
+      "TailwindCSS",
+      "Figma",
+      "InvisionApp",
+      "Zeplin"
+    ],
+    "Backend Development": [
+      "Node.js",
+      "NestJS",
+      "Express",
+      "Python",
+      "Django",
+      "Flask",
+      "FastAPI",
+      "RESTful APIs",
+      "GraphQL",
+      "Redis",
+      "RabbitMQ",
+      "TypeORM"
+    ],
+    "Web3 Technologies": [
+      "Solidity",
+      "Web3.js",
+      "Ethers.js",
+      "Smart Contracts"
+    ],
+    "Blockchain Platforms": [
+      "Ethereum",
+      "Polygon",
+      "Solana",
+      "Binance Smart Chain"
+    ],
+    "Decentralized Finance (DeFi)": [
+      "DApps",
+      "Decentralized Exchanges (DEX)",
+      "Centralized Exchanges (CEX)",
+      "NFT Marketplaces"
+    ],
+    "Database Management": [
+      "MongoDB",
+      "PostgreSQL",
+      "MySQL",
+      "MSSQL"
+    ],
+    "Smart Contract Development": [
+      "Solidity",
+      "Hardhat",
+      "Truffle",
+      "OpenZeppelin"
+    ],
+    "Testing and Debugging": [
+      "Karma",
+      "Jest",
+      "Selenium",
+      "Cypress",
+      "Pytest"
+    ],
+    "Version Controlling System": [
+      "Git",
+      "Github",
+      "Gitlab",
+      "BitBucket"
+    ],
+    "Tools and DevOps": [
+      "Docker",
+      "Git",
+      "GitHub Actions",
+      "CircleCI",
+      "AWS",
+      "IPFS",
+      "Heroku",
+      "Vercel"
+    ],
+    "Project Management": [
+      "Agile Methodology",
+      "Jira",
+      "Confluence"
+    ],
+    "Data Visualization": [
+      "D3.js",
+      "Chart.js"
+    ]
+  },
+  "education": {
+    "degree": "Bachelor of Software Engineering",
+    "university": "Tsinghua University",
+    "period": "Sep 2011 to Jun 2014",
+    "description": "Major concentration in Software Development, Algorithm Design, and Database Management Systems with distinction."
+  }
+}

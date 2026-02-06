@@ -8,14 +8,20 @@
         {{from}} - {{to}}
       </h5>
     </div> -->
-    <div style="display:flex; align-items: center; justify-content: space-between;">
-      <h3 style="color: #0A3662; font-size: 9pt; font-weight: bold; margin: 0; white-space: nowrap;">
-        {{position}} at {{company_name}}
-      </h3>
-      <h5 style="color: #666; font-size: 8.1pt; font-weight: normal; margin: 0; white-space: nowrap;">
-        {{from}} - {{to}}
-      </h5>
-    </div>
+    <table style="width: 100%; border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0;">
+      <tr>
+        <td style="padding: 0; margin: 0; vertical-align: baseline; width: auto;">
+          <h3 style="color: #0A3662; font-size: 9pt; font-weight: bold; margin: 0; padding: 0; white-space: nowrap; display: inline;">
+            {{position}} at {{company_name}}&nbsp;&nbsp;
+          </h3>
+        </td>
+        <td style="padding: 0; margin: 0; vertical-align: baseline; text-align: right; width: auto; white-space: nowrap;">
+          <h5 style="color: #0e0e0e; font-size: 8.1pt; font-weight: normal; margin: 0; padding: 0; white-space: nowrap; display: inline;">
+            &nbsp;&nbsp;{{from}} - {{to}}
+          </h5>
+        </td>
+      </tr>
+    </table>
   </div>
   <p style="color: #666; margin: 0.2em 0;">
     <span style="font-weight: 500;">{{location}}</span>
